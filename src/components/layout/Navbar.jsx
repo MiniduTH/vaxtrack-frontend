@@ -17,16 +17,31 @@ const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } })
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Theme toggle initialization (can be hooked to a centralized store/context later)
+  // Theme initialization and synchronization
   useEffect(() => {
-    if (document.documentElement.classList.contains('dark')) {
+    const savedTheme = localStorage.getItem('theme');
+    const isDark = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    
+    if (isDark) {
+      document.documentElement.classList.add('dark');
       setIsDarkMode(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      setIsDarkMode(false);
     }
   }, []);
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   };
 
   const handleLogout = () => {

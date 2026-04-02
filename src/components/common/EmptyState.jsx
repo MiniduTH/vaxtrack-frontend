@@ -11,7 +11,7 @@ const EmptyState = ({
   className = ''
 }) => {
   return (
-    <div className={`flex flex-col items-center justify-center p-8 text-center min-h-[300px] bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 ${className}`}>
+    <div className={`flex flex-col items-center justify-center p-8 text-center min-h-[300px] bg-background dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 ${className}`}>
       
       {/* Visual Indicator (Icon or Image) */}
       {imageSrc ? (
@@ -27,7 +27,7 @@ const EmptyState = ({
       ) : null}
 
       {/* Text Content */}
-      <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+      <h3 className="text-xl font-bold text-foreground tracking-tight mb-2">
         {title}
       </h3>
       

@@ -17,7 +17,7 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-background overflow-hidden relative">
+    <div className="flex h-screen bg-background dark:bg-background overflow-hidden relative transition-colors duration-300">
       
       {/* Sidebar Component */}
       <Sidebar 
@@ -36,7 +36,7 @@ const MainLayout = () => {
         />
         
         {/* Scrollable Main Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 dark:bg-background relative p-4 sm:p-6 lg:p-8 relax-scroll">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-background relative p-4 sm:p-6 lg:p-8 relax-scroll transition-colors duration-300">
           
           {/* A container to cap max width nicely */}
           <div className="mx-auto max-w-7xl w-full">

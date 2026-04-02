@@ -73,7 +73,7 @@ const Sidebar = ({ isOpen, toggleSidebar, userRole = 'patient' }) => {
             <span className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center text-white font-bold text-xl leading-none">
               V
             </span>
-            <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <span className="text-xl font-bold tracking-tight text-foreground">
               VaxTrack
             </span>
           </div>

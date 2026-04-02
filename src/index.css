@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode for v4 */
+@variant dark (&:where(.dark, .dark *));
+
+
 @theme {
   /* Semantic Theme Connections */
   --color-background: var(--background);
