@@ -4,3 +4,7 @@ export { default as Card } from './Card';
 export { default as Spinner } from './Spinner';
 export { default as StatusBadge } from './StatusBadge';
 export { default as EmptyState } from './EmptyState';
+export { default as Modal } from './Modal';
+export { default as ConfirmDialog } from './ConfirmDialog';
+export { default as FormInput } from './FormInput';
+export { default as FormSelect } from './FormSelect';
