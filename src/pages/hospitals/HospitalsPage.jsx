@@ -184,6 +184,7 @@ const HospitalsPage = () => {
             </div>
             <div className="w-full md:w-64">
               <FormSelect
+                id="filter-city"
                 placeholder="Filter by City"
                 value={filterCity}
                 onChange={(e) => setFilterCity(e.target.value)}
@@ -192,6 +193,7 @@ const HospitalsPage = () => {
             </div>
             <div className="w-full md:w-64">
               <FormSelect
+                id="filter-district"
                 placeholder="Filter by District"
                 value={filterDistrict}
                 onChange={(e) => setFilterDistrict(e.target.value)}
@@ -281,17 +283,18 @@ const HospitalsPage = () => {
       >
         <form onSubmit={handleSave} className="space-y-5">
           <FormInput
+            id="hospital-name"
             label="Hospital Name"
             value={formData.name}
             onChange={e => setFormData({ ...formData, name: e.target.value })}
             required
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <FormInput label="City" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} required />
-            <FormInput label="District" value={formData.district} onChange={e => setFormData({ ...formData, district: e.target.value })} required />
+            <FormInput id="city" label="City" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} required />
+            <FormInput id="district" label="District" value={formData.district} onChange={e => setFormData({ ...formData, district: e.target.value })} required />
           </div>
-          <FormInput label="Full Address" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} required />
-          <FormInput label="Contact Number" type="tel" value={formData.contactNumber} onChange={e => setFormData({ ...formData, contactNumber: e.target.value })} required />
+          <FormInput id="address" label="Full Address" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} required />
+          <FormInput id="contact" label="Contact Number" type="tel" value={formData.contactNumber} onChange={e => setFormData({ ...formData, contactNumber: e.target.value })} required />
           
           <div className="flex flex-col gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
@@ -313,8 +316,8 @@ const HospitalsPage = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormInput label="Latitude" type="number" step="any" value={formData.latitude} onChange={e => setFormData({ ...formData, latitude: e.target.value })} />
-              <FormInput label="Longitude" type="number" step="any" value={formData.longitude} onChange={e => setFormData({ ...formData, longitude: e.target.value })} />
+              <FormInput id="lat" label="Latitude" type="number" step="any" value={formData.latitude} onChange={e => setFormData({ ...formData, latitude: e.target.value })} />
+              <FormInput id="lng" label="Longitude" type="number" step="any" value={formData.longitude} onChange={e => setFormData({ ...formData, longitude: e.target.value })} />
             </div>
             <p className="text-[10px] text-slate-500 italic px-1">Tip: Click Auto-Geocode to automatically fetch coordinates from the address.</p>
           </div>

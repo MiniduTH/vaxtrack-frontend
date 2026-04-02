@@ -171,6 +171,7 @@ const ClinicsPage = () => {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <FormInput 
+                id="filter-date"
                 type="date"
                 label="Filter by Date"
                 value={searchDate}
@@ -179,6 +180,7 @@ const ClinicsPage = () => {
             </div>
             <div className="w-full md:w-1/2">
               <FormSelect 
+                id="filter-hospital"
                 label="Filter by Hospital"
                 value={filterHospital}
                 onChange={(e) => setFilterHospital(e.target.value)}
@@ -286,6 +288,7 @@ const ClinicsPage = () => {
         <form onSubmit={handleSave} className="space-y-5">
            
            <FormSelect 
+             id="clinic-hospital"
              label="Hospital" 
              value={formData.hospital} 
              onChange={e => setFormData({...formData, hospital: e.target.value})} 
@@ -295,14 +298,14 @@ const ClinicsPage = () => {
            />
            
            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-             <FormInput label="Date" type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required />
-             <FormInput label="Start Time" type="time" value={formData.startTime} onChange={e => setFormData({...formData, startTime: e.target.value})} required />
-             <FormInput label="End Time" type="time" value={formData.endTime} onChange={e => setFormData({...formData, endTime: e.target.value})} required />
+             <FormInput id="clinic-date" label="Date" type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required />
+             <FormInput id="start-time" label="Start Time" type="time" value={formData.startTime} onChange={e => setFormData({...formData, startTime: e.target.value})} required />
+             <FormInput id="end-time" label="End Time" type="time" value={formData.endTime} onChange={e => setFormData({...formData, endTime: e.target.value})} required />
            </div>
            
            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-             <FormInput label="Total Capacity" type="number" min="1" value={formData.capacity} onChange={e => setFormData({...formData, capacity: Number(e.target.value)})} required helperText="Max number of slots." />
-             <FormSelect label="Vaccine Type" value={formData.vaccineType} onChange={e => setFormData({...formData, vaccineType: e.target.value})} required options={[
+             <FormInput id="capacity" label="Total Capacity" type="number" min="1" value={formData.capacity} onChange={e => setFormData({...formData, capacity: Number(e.target.value)})} required helperText="Max number of slots." />
+             <FormSelect id="vaccine" label="Vaccine Type" value={formData.vaccineType} onChange={e => setFormData({...formData, vaccineType: e.target.value})} required options={[
                {label: 'Pfizer-BioNTech', value: 'Pfizer'},
                {label: 'Moderna', value: 'Moderna'},
                {label: 'AstraZeneca', value: 'AstraZeneca'},
