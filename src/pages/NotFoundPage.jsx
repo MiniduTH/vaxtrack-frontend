@@ -14,15 +14,18 @@ const NotFoundPage = () => {
       
       <div className="text-center z-10 animate-in slide-in-from-bottom-8 fade-in-0 duration-700 max-w-xl mx-auto">
         
-        {/* Large 404 Text */}
-        <h1 className="text-8xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-400 dark:from-primary-500 dark:to-slate-600 select-none">
+        {/* Large 404 Text (decorative) */}
+        <div
+          className="text-8xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-400 dark:from-primary-500 dark:to-slate-600 select-none"
+          aria-hidden="true"
+        >
           404
-        </h1>
+        </div>
         
         <div className="mt-8 mb-10 space-y-4">
-          <h2 className="text-3xl font-heading font-bold text-slate-900 dark:text-white">
+          <h1 className="text-3xl font-heading font-bold text-slate-900 dark:text-white">
             Page not found
-          </h2>
+          </h1>
           <p className="text-lg text-slate-500 dark:text-slate-400">
             Sorry, we couldn't find the page you're looking for. It might have been moved, deleted, or perhaps the URL is incorrect.
           </p>
