@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-const BASE_URL = '/api/records';
+const BASE_URL = '/records';
 
 /**
  * Get all vaccination records (Admin/Staff only)
