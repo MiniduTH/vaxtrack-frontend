@@ -185,7 +185,9 @@ const RecordsPage = () => {
                       {record.dependentName || <span className="text-slate-400 italic">Self</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
-                      {record.vaccineId || 'Unknown'} {/* Backend didn't populate vaccineId full obj in records controller? In getting all records, populated: patientId, hospitalId, administeredBy */}
+                      {(record.vaccineId && typeof record.vaccineId === 'object'
+                        ? record.vaccineId?.name || record.vaccineId?._id
+                        : record.vaccineId) || 'Unknown'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
                       {record.hospitalId?.name || 'Unknown'}
