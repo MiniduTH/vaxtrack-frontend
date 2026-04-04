@@ -34,17 +34,27 @@ const RecordsPage = () => {
     setLoading(true);
     setError(null);
     try {
+      let data;
+
       if (isStaffOrAdmin) {
         // Only send non-empty filters
         const activeFilters = Object.fromEntries(
           Object.entries(filters).filter(([_, v]) => v.trim() !== '')
         );
-        const data = await getAllRecords(activeFilters);
-        setRecords(data.data || []);
+        data = await getAllRecords(activeFilters);
       } else {
-        const data = await getMyRecords();
-        setRecords(data.data || []);
+        data = await getMyRecords();
       }
+
+      const normalizedRecords = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.records)
+          ? data.records
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+      setRecords(normalizedRecords);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch vaccination records.');
     } finally {
