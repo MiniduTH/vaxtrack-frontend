@@ -43,5 +43,5 @@ export const formatPhone = (phoneNumber) => {
   }
   
   // Default fallback if it doesn't match standard patterns
-  return phoneNumber;
+  return cleaned;
 };
