@@ -3,17 +3,33 @@ import { getDueRecords } from '../../api/recordApi';
 import { formatDate } from '../../utils/formatters';
 import { Card, CardHeader, CardTitle, CardBody, Spinner, StatusBadge } from '../common';
 
+const EMPTY_DUE_DATA = { upcoming: { records: [] }, overdue: { records: [] } };
+
+const normalizeDueRecordsData = (payload) => ({
+  upcoming: {
+    ...EMPTY_DUE_DATA.upcoming,
+    ...(payload?.upcoming && typeof payload.upcoming === 'object' ? payload.upcoming : {}),
+    records: Array.isArray(payload?.upcoming?.records) ? payload.upcoming.records : [],
+  },
+  overdue: {
+    ...EMPTY_DUE_DATA.overdue,
+    ...(payload?.overdue && typeof payload.overdue === 'object' ? payload.overdue : {}),
+    records: Array.isArray(payload?.overdue?.records) ? payload.overdue.records : [],
+  },
+});
+
 const DueVaccinationsWidget = () => {
-  const [data, setData] = useState({ upcoming: { records: [] }, overdue: { records: [] } });
+  const [data, setData] = useState(EMPTY_DUE_DATA);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDue = async () => {
       try {
-        const response = await getDueRecords();
-        setData(response.data || { upcoming: { records: [] }, overdue: { records: [] } });
+        const dueRecordsData = await getDueRecords();
+        setData(normalizeDueRecordsData(dueRecordsData));
       } catch (err) {
         console.error('Failed to load due vaccinations', err);
+        setData(EMPTY_DUE_DATA);
       } finally {
         setLoading(false);
       }
