@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAllSideEffects } from '../../api/sideEffectApi';
 import { Card, CardHeader, CardTitle, CardBody, Spinner, EmptyState, FormInput, Button, SeverityBadge } from '../../components/common';
-import { SEVERITY_LEVELS } from '../../utils/constants';
 
 const formatDate = (dateStr) => {
   if (!dateStr) return 'N/A';
@@ -18,13 +17,13 @@ const AdminSideEffectsPage = () => {
     userId: '',
   });
 
-  const fetchReports = async () => {
+  const fetchReports = async (filtersToUse = filters) => {
     setLoading(true);
     setError(null);
     try {
-      const activeFilters = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v.trim() !== ''));
-      const response = await getAllSideEffects(activeFilters);
-      setReports(response.data || []);
+      const activeFilters = Object.fromEntries(Object.entries(filtersToUse).filter(([_, v]) => v.trim() !== ''));
+      const data = await getAllSideEffects(activeFilters);
+      setReports(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load side effects.');
     } finally {
@@ -47,8 +46,9 @@ const AdminSideEffectsPage = () => {
   };
 
   const clearFilters = () => {
-    setFilters({ severity: '', userId: '' });
-    setTimeout(fetchReports, 0);
+    const emptyFilters = { severity: '', userId: '' };
+    setFilters(emptyFilters);
+    fetchReports(emptyFilters);
   };
 
   return (
@@ -74,9 +74,9 @@ const AdminSideEffectsPage = () => {
                 className="w-full rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
               >
                 <option value="">All</option>
-                <option value={SEVERITY_LEVELS?.MILD || 'Mild'}>Mild</option>
-                <option value={SEVERITY_LEVELS?.MODERATE || 'Moderate'}>Moderate</option>
-                <option value={SEVERITY_LEVELS?.SEVERE || 'Severe'}>Severe</option>
+                <option value="Mild">Mild</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Severe">Severe</option>
               </select>
             </div>
             

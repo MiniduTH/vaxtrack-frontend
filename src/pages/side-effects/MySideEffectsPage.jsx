@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { getMySideEffects, reportSideEffect } from '../../api/sideEffectApi';
 import axiosInstance from '../../api/axiosInstance';
-import { Card, CardHeader, CardTitle, CardBody, Spinner, EmptyState, Button, FormInput, FormSelect, SeverityBadge } from '../../components/common';
-import { SEVERITY_LEVELS } from '../../utils/constants';
+import { Card, CardHeader, CardTitle, CardBody, Spinner, EmptyState, Button, SeverityBadge } from '../../components/common';
 
 // We need a helper to format dates similar to formatters.js (which might be in another branch)
 const formatDate = (dateStr) => {
@@ -22,6 +21,7 @@ const MySideEffectsPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const successTimerRef = useRef(null);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
@@ -30,13 +30,14 @@ const MySideEffectsPage = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const reportsRes = await getMySideEffects();
-        setReports(reportsRes.data || []);
+        const reportsData = await getMySideEffects();
+        setReports(Array.isArray(reportsData) ? reportsData : reportsData?.data || []);
         
         // Fetch records directly using axios to support the dropdown
         setLoadingRecords(true);
-        const recordsRes = await axiosInstance.get('/api/records/my');
-        setMyRecords(recordsRes.data?.data || []);
+        const recordsRes = await axiosInstance.get('/records/my');
+        const recordsData = recordsRes.data;
+        setMyRecords(Array.isArray(recordsData) ? recordsData : recordsData?.data || []);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load side-effect reports.');
       } finally {
@@ -45,6 +46,13 @@ const MySideEffectsPage = () => {
       }
     };
     fetchData();
+  }, []);
+
+  // Cleanup success timer on unmount
+  useEffect(() => {
+    return () => {
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+    };
   }, []);
 
   const onSubmit = async (data) => {
@@ -65,13 +73,14 @@ const MySideEffectsPage = () => {
       const newReportResponse = await reportSideEffect(payload);
       
       // Prepend the new report to the list
-      setReports((prev) => [newReportResponse.data, ...prev]);
+      setReports((prev) => [newReportResponse, ...prev]);
       
       setSubmitSuccess(true);
       reset();
       
-      // Auto-hide success message
-      setTimeout(() => setSubmitSuccess(false), 5000);
+      // Auto-hide success message, clearing any existing timer
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+      successTimerRef.current = setTimeout(() => setSubmitSuccess(false), 5000);
     } catch (err) {
       setSubmitError(err.response?.data?.message || 'Failed to submit side effect report.');
     } finally {
@@ -155,9 +164,9 @@ const MySideEffectsPage = () => {
                     {...register('severity', { required: 'Severity is required' })}
                     className="w-full rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                   >
-                    <option value={SEVERITY_LEVELS?.MILD || 'Mild'}>Mild</option>
-                    <option value={SEVERITY_LEVELS?.MODERATE || 'Moderate'}>Moderate</option>
-                    <option value={SEVERITY_LEVELS?.SEVERE || 'Severe'}>Severe</option>
+                    <option value="Mild">Mild</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Severe">Severe</option>
                   </select>
                 </div>
 
@@ -195,7 +204,7 @@ const MySideEffectsPage = () => {
                           <strong>Symptoms:</strong> {report.symptoms.join(', ')}
                         </p>
                         <p className="text-xs text-slate-500">
-                          <strong>Vaccine:</strong> {report.recordId?.vaccineId || 'Unknown'} | 
+                          <strong>Vaccine:</strong> {report.recordId?.vaccineId?.name || 'Unknown'} | 
                           <strong> Patient:</strong> {report.recordId?.dependentName || 'Self'}
                         </p>
                       </div>

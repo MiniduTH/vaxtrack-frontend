@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-const BASE_URL = '/api/side-effects';
+const BASE_URL = '/side-effects';
 
 /**
  * Report a new side effect (Patient)
