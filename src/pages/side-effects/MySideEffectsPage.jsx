@@ -1,14 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { getMySideEffects, reportSideEffect } from '../../api/sideEffectApi';
-import axiosInstance from '../../api/axiosInstance';
+import { getMyRecords } from '../../api/recordApi';
+import { formatDate } from '../../utils/formatters';
 import { Card, CardHeader, CardTitle, CardBody, Spinner, EmptyState, Button, SeverityBadge } from '../../components/common';
-
-// We need a helper to format dates similar to formatters.js (which might be in another branch)
-const formatDate = (dateStr) => {
-  if (!dateStr) return 'N/A';
-  return new Date(dateStr).toLocaleDateString();
-};
 
 const MySideEffectsPage = () => {
   const [reports, setReports] = useState([]);
@@ -33,10 +28,9 @@ const MySideEffectsPage = () => {
         const reportsData = await getMySideEffects();
         setReports(Array.isArray(reportsData) ? reportsData : reportsData?.data || []);
         
-        // Fetch records directly using axios to support the dropdown
+        // Fetch vaccination records for the dropdown
         setLoadingRecords(true);
-        const recordsRes = await axiosInstance.get('/records/my');
-        const recordsData = recordsRes.data;
+        const recordsData = await getMyRecords();
         setMyRecords(Array.isArray(recordsData) ? recordsData : recordsData?.data || []);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load side-effect reports.');

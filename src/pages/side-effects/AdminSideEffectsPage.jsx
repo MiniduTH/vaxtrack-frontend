@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllSideEffects } from '../../api/sideEffectApi';
+import { formatDate } from '../../utils/formatters';
 import { Card, CardHeader, CardTitle, CardBody, Spinner, EmptyState, FormInput, Button, SeverityBadge } from '../../components/common';
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return 'N/A';
-  return new Date(dateStr).toLocaleDateString();
-};
 
 const AdminSideEffectsPage = () => {
   const [reports, setReports] = useState([]);
@@ -23,7 +19,7 @@ const AdminSideEffectsPage = () => {
     try {
       const activeFilters = Object.fromEntries(Object.entries(filtersToUse).filter(([_, v]) => v.trim() !== ''));
       const data = await getAllSideEffects(activeFilters);
-      setReports(Array.isArray(data) ? data : []);
+      setReports(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load side effects.');
     } finally {

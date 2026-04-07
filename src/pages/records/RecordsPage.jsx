@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuthStore } from '../../store/useAuthStore';
+import useAuthStore from '../../store/useAuthStore';
 import { getAllRecords, getMyRecords } from '../../api/recordApi';
 import { formatDate } from '../../utils/formatters';
 import { USER_ROLES } from '../../utils/constants';
