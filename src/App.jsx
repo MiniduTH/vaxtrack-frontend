@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { MainLayout } from './components/layout';
 import { HospitalsPage, ClinicsPage, NotFoundPage, RecordsPage, HistoryPage, MySideEffectsPage, AdminSideEffectsPage } from './pages';
-import DueVaccinationsWidget from './components/dashboard/DueVaccinationsWidget';
 
 function App() {
   return (
