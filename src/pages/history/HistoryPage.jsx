@@ -132,7 +132,7 @@ const HistoryPage = () => {
             <div key={dep.dependentName}>
               <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                 <span className="bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400 px-3 py-1 rounded-full text-sm">
-                  {dep.count} Records
+                  {dep.records?.length || 0} Records
                 </span>
               </h2>
               {renderTimeline(dep.records)}

@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { MainLayout } from './components/layout';
-import { HospitalsPage, ClinicsPage, NotFoundPage } from './pages';
+import { HospitalsPage, ClinicsPage, NotFoundPage, RecordsPage, HistoryPage, MySideEffectsPage, AdminSideEffectsPage } from './pages';
 
 function App() {
   return (
@@ -28,6 +28,10 @@ function App() {
         <Route path="/dashboard" element={<MainLayout />}>
            <Route path="hospitals" element={<HospitalsPage />} />
            <Route path="clinics" element={<ClinicsPage />} />
+           <Route path="records" element={<RecordsPage />} />
+           <Route path="history" element={<HistoryPage />} />
+           <Route path="side-effects" element={<MySideEffectsPage />} />
+           <Route path="side-effects/admin" element={<AdminSideEffectsPage />} />
            {/* Fallback dashboard route */}
            <Route index element={<Navigate to="/dashboard/hospitals" replace />} />
         </Route>

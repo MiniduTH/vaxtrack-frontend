@@ -76,7 +76,7 @@ const DueVaccinationsWidget = () => {
                         Past due: {formatDate(record.nextDoseDate)}
                       </p>
                     </div>
-                    <StatusBadge status="Error" text="Overdue" />
+                    <StatusBadge status="danger">Overdue</StatusBadge>
                   </div>
                 ))}
               </div>
@@ -96,7 +96,7 @@ const DueVaccinationsWidget = () => {
                         Due: {formatDate(record.nextDoseDate)}
                       </p>
                     </div>
-                    <StatusBadge status="Pending" text="Soon" />
+                    <StatusBadge status="warning">Soon</StatusBadge>
                   </div>
                 ))}
               </div>
