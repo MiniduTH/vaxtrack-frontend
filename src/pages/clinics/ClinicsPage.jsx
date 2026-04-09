@@ -14,11 +14,19 @@ import {
 import { FiPlus, FiEdit2, FiTrash2, FiCalendar, FiClock, FiActivity, FiUsers } from 'react-icons/fi';
 import clinicApi from '../../api/clinicApi';
 import hospitalApi from '../../api/hospitalApi';
+import appointmentApi from '../../api/appointmentApi'; // For booking
+import dependentApi from '../../api/dependentApi';
 import { toast } from 'react-hot-toast';
+import useAuthStore from '../../store/useAuthStore';
 
 const ClinicsPage = () => {
+  const user = useAuthStore((state) => state.user);
+  const isStaffOrAdmin = user?.role === 'Admin' || user?.role === 'HospitalStaff';
+  const isPublic = user?.role === 'Public';
+
   const [clinics, setClinics] = useState([]);
   const [hospitalsList, setHospitalsList] = useState([]);
+  const [dependentsList, setDependentsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchDate, setSearchDate] = useState('');
   const [filterHospital, setFilterHospital] = useState('');
@@ -26,6 +34,7 @@ const ClinicsPage = () => {
   // Modals
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isBookOpen, setIsBookOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // State
@@ -38,6 +47,7 @@ const ClinicsPage = () => {
     capacity: 0, 
     vaccineType: 'Pfizer' 
   });
+  const [bookingData, setBookingData] = useState({ dependentId: '' });
 
   const fetchClinics = async () => {
     try {
@@ -65,10 +75,22 @@ const ClinicsPage = () => {
     }
   };
 
+  const fetchDependents = async () => {
+    try {
+      if (isPublic) {
+        const data = await dependentApi.getDependents();
+        setDependentsList(Array.isArray(data) ? data : data.dependents || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch dependents', error);
+    }
+  };
+
   useEffect(() => {
     fetchClinics();
     fetchHospitals();
-  }, []);
+    fetchDependents();
+  }, [isPublic]);
 
   const hospitalOptionsForFilter = useMemo(() => {
     const names = [...new Set(clinics.map(c => c.hospital?.name).filter(Boolean))];
@@ -143,6 +165,27 @@ const ClinicsPage = () => {
     }
   };
 
+  const handleBook = async (e) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      const payload = { clinicId: selectedClinic._id };
+      if (bookingData.dependentId) {
+        payload.dependentId = bookingData.dependentId;
+      }
+      const response = await appointmentApi.book(payload);
+      if (response) {
+        toast.success('Appointment booked successfully!');
+        fetchClinics();
+      }
+      setIsBookOpen(false);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to book appointment');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Helper for capacity indicator
   const getCapacityColor = (booked, capacity) => {
     const ratio = booked / capacity;
@@ -157,12 +200,14 @@ const ClinicsPage = () => {
       {/* Header Area */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Vaccination Clinics</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage scheduled sessions and monitor local capacity.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{isPublic ? 'Find Clinics' : 'Vaccination Clinics'}</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{isPublic ? 'Browse available clinics and book your vaccination appointment.' : 'Manage scheduled sessions and monitor local capacity.'}</p>
         </div>
-        <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
-          Schedule Clinic
-        </Button>
+        {isStaffOrAdmin && (
+          <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
+            Schedule Clinic
+          </Button>
+        )}
       </div>
 
       {/* Filters Card */}
@@ -256,12 +301,21 @@ const ClinicsPage = () => {
                   </div>
 
                   <div className="pt-4 border-t border-border mt-auto flex justify-end gap-2">
-                    <Button variant="outline" size="sm" onClick={() => handleOpenForm(clinic)} icon={FiEdit2}>
-                      Edit
-                    </Button>
-                    <Button variant="danger" className="!bg-danger-500/10 !text-danger-600 hover:!bg-danger-500 hover:!text-white border border-danger-200 dark:border-danger-900/50" size="sm" onClick={() => { setSelectedClinic(clinic); setIsDeleteOpen(true); }} icon={FiTrash2}>
-                      Delete
-                    </Button>
+                    {isStaffOrAdmin && (
+                      <>
+                        <Button variant="outline" size="sm" onClick={() => handleOpenForm(clinic)} icon={FiEdit2}>
+                          Edit
+                        </Button>
+                        <button className="px-3 py-1.5 text-sm font-medium rounded-lg text-danger-600 bg-danger-50 hover:bg-danger-100 transition-colors flex items-center justify-center gap-1 border border-danger-200" onClick={() => { setSelectedClinic(clinic); setIsDeleteOpen(true); }}>
+                          <FiTrash2 /> Delete
+                        </button>
+                      </>
+                    )}
+                    {isPublic && !isFull && (
+                      <Button variant="primary" size="sm" onClick={() => { setSelectedClinic(clinic); setBookingData({ dependentId: '' }); setIsBookOpen(true); }} icon={FiCalendar}>
+                        Book Appointment
+                      </Button>
+                    )}
                   </div>
                 </CardBody>
               </Card>
@@ -330,6 +384,38 @@ const ClinicsPage = () => {
         intent="danger"
         isLoading={isSubmitting}
       />
+
+      {/* Book Appointment Modal */}
+      <Modal 
+        isOpen={isBookOpen}
+        onClose={() => setIsBookOpen(false)}
+        title="Book Appointment"
+        size="md"
+      >
+        <form onSubmit={handleBook} className="space-y-5">
+          <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 text-sm">
+            <p className="font-semibold">{selectedClinic?.vaccineType} Vaccine</p>
+            <p className="text-slate-500">{selectedClinic?.hospital?.name}</p>
+            <p className="text-slate-500 mt-1">{selectedClinic?.date ? selectedClinic.date.split('T')[0] : ''} ({selectedClinic?.startTime} - {selectedClinic?.endTime})</p>
+          </div>
+          
+          <FormSelect 
+            id="book-dependent"
+            label="Booking For" 
+            value={bookingData.dependentId} 
+            onChange={e => setBookingData({ dependentId: e.target.value })}
+            options={[
+              { label: 'Myself', value: '' },
+              ...dependentsList.map(dep => ({ label: dep.name, value: dep._id || dep.id }))
+            ]}
+          />
+          
+          <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
+            <Button variant="outline" onClick={() => setIsBookOpen(false)} disabled={isSubmitting}>Cancel</Button>
+            <Button type="submit" variant="primary" isLoading={isSubmitting}>Confirm Booking</Button>
+          </div>
+        </form>
+      </Modal>
 
     </div>
   );

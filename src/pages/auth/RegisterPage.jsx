@@ -20,7 +20,7 @@ const RegisterPage = () => {
       if (res.token) {
         setLogin(res.user, res.token);
         toast.success('Registration successful! Welcome to VaxTrack.');
-        navigate('/');
+        navigate('/dashboard');
       } else {
         toast.success('Registration successful! Please log in.');
         navigate('/login');

@@ -4,9 +4,12 @@ import { FiCalendar, FiClock, FiMapPin, FiUser, FiCheckCircle, FiXCircle, FiInfo
 import appointmentApi from '../../api/appointmentApi';
 import useAuthStore from '../../store/useAuthStore';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../../components/common';
 
 const AppointmentsPage = () => {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -82,6 +85,11 @@ const AppointmentsPage = () => {
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Appointments</h1>
           <p className="text-sm text-gray-500 mt-1">Manage your vaccination appointments.</p>
         </div>
+        {user?.role === 'Public' && (
+          <Button onClick={() => navigate('/dashboard/clinics')} variant="primary" icon={FiCalendar}>
+            Book New
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

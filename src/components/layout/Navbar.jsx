@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMenu, FiBell, FiUser, FiLogOut, FiMoon, FiSun } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
 
 const Navbar = ({ toggleSidebar, user = { name: 'Guest', role: 'Public' } }) => {
@@ -127,10 +127,10 @@ const Navbar = ({ toggleSidebar, user = { name: 'Guest', role: 'Public' } }) => 
                 <p className="text-xs text-slate-500 truncate mt-0.5 capitalize">{user.role}</p>
               </div>
               
-              <a href="#profile" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+              <Link to="/dashboard/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" onClick={() => setIsDropdownOpen(false)}>
                 <FiUser className="w-4 h-4" />
                 My Profile
-              </a>
+              </Link>
               
               <div className="h-px bg-border my-1" />
               

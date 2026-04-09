@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import useAuthStore from '../../store/useAuthStore';
-import { getAllRecords, getMyRecords } from '../../api/recordApi';
+import { getAllRecords, getMyRecords, createRecord } from '../../api/recordApi';
+import toast from 'react-hot-toast';
 import { formatDate } from '../../utils/formatters';
 import { USER_ROLES } from '../../utils/constants';
 
@@ -13,6 +14,7 @@ import {
   EmptyState,
   FormInput,
   Button,
+  Modal,
 } from '../../components/common';
 
 const RecordsPage = () => {
@@ -20,6 +22,18 @@ const RecordsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const user = useAuthStore((state) => state.user);
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    patientId: '',
+    dependentName: '',
+    vaccineId: '',
+    batchId: '',
+    hospitalId: '',
+    dateAdministered: new Date().toISOString().split('T')[0],
+    nextDoseDate: '',
+  });
 
   // Filters for staff/admin
   const [filters, setFilters] = useState({
@@ -82,12 +96,49 @@ const RecordsPage = () => {
     setTimeout(fetchRecords, 0); 
   };
 
+  const handleOpenForm = () => {
+    setFormData({
+      patientId: '',
+      dependentName: '',
+      vaccineId: '',
+      batchId: '',
+      hospitalId: '',
+      dateAdministered: new Date().toISOString().split('T')[0],
+      nextDoseDate: '',
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleSaveRecord = async (e) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      const payload = { ...formData };
+      if (!payload.dependentName) delete payload.dependentName;
+      if (!payload.nextDoseDate) delete payload.nextDoseDate;
+
+      await createRecord(payload);
+      toast.success('Vaccination record created successfully');
+      setIsModalOpen(false);
+      fetchRecords();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to create record');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
           {isStaffOrAdmin ? 'All Vaccination Records' : 'My Vaccination Records'}
         </h1>
+        {isStaffOrAdmin && (
+          <Button onClick={handleOpenForm} variant="primary">
+            Add Record
+          </Button>
+        )}
       </div>
 
       {isStaffOrAdmin && (
@@ -204,6 +255,73 @@ const RecordsPage = () => {
             </table>
           </div>
         </Card>
+      )}
+
+      {/* Add Record Modal */}
+      {isStaffOrAdmin && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Add Vaccination Record"
+          size="lg"
+        >
+          <form onSubmit={handleSaveRecord} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormInput
+                label="Patient ID *"
+                value={formData.patientId}
+                onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
+                required
+                placeholder="MongoDB User ID"
+              />
+              <FormInput
+                label="Dependent Name"
+                value={formData.dependentName}
+                onChange={(e) => setFormData({ ...formData, dependentName: e.target.value })}
+                placeholder="Leave blank for self"
+              />
+              <FormInput
+                label="Vaccine ID *"
+                value={formData.vaccineId}
+                onChange={(e) => setFormData({ ...formData, vaccineId: e.target.value })}
+                required
+              />
+              <FormInput
+                label="Batch ID *"
+                value={formData.batchId}
+                onChange={(e) => setFormData({ ...formData, batchId: e.target.value })}
+                required
+              />
+              <FormInput
+                label="Hospital ID *"
+                value={formData.hospitalId}
+                onChange={(e) => setFormData({ ...formData, hospitalId: e.target.value })}
+                required
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormInput
+                label="Date Administered *"
+                type="date"
+                value={formData.dateAdministered}
+                onChange={(e) => setFormData({ ...formData, dateAdministered: e.target.value })}
+                required
+              />
+              <FormInput
+                label="Next Dose Due Date"
+                type="date"
+                value={formData.nextDoseDate}
+                onChange={(e) => setFormData({ ...formData, nextDoseDate: e.target.value })}
+              />
+            </div>
+            
+            <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
+              <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Cancel</Button>
+              <Button type="submit" variant="primary" isLoading={isSubmitting}>Save Record</Button>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

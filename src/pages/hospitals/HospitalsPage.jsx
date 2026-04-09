@@ -17,8 +17,11 @@ import { FiPlus, FiEdit2, FiTrash2, FiMapPin, FiSearch, FiFilter, FiNavigation }
 import hospitalApi from '../../api/hospitalApi';
 import geocodeApi from '../../api/geocodeApi';
 import { toast } from 'react-hot-toast';
+import useAuthStore from '../../store/useAuthStore';
 
 const HospitalsPage = () => {
+  const user = useAuthStore((state) => state.user);
+  const isAdmin = user?.role === 'Admin';
   // State
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -165,9 +168,11 @@ const HospitalsPage = () => {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Hospitals</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage hospital directory, geocoding details, and filters.</p>
         </div>
-        <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
-          Add Hospital
-        </Button>
+        {isAdmin && (
+          <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
+            Add Hospital
+          </Button>
+        )}
       </div>
 
       {/* Filters Card */}
@@ -219,22 +224,24 @@ const HospitalsPage = () => {
                   <h3 className="text-lg font-bold text-foreground line-clamp-1" title={hospital.name}>
                     {hospital.name}
                   </h3>
-                  <div className="flex gap-1 ml-2 shrink-0">
-                    <button
-                      onClick={() => handleOpenForm(hospital)}
-                      className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors"
-                      aria-label="Edit"
-                    >
-                      <FiEdit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => { setSelectedHospital(hospital); setIsDeleteOpen(true); }}
-                      className="p-1.5 text-slate-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded transition-colors"
-                      aria-label="Delete"
-                    >
-                      <FiTrash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                  {isAdmin && (
+                    <div className="flex gap-1 ml-2 shrink-0">
+                      <button
+                        onClick={() => handleOpenForm(hospital)}
+                        className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors"
+                        aria-label="Edit"
+                      >
+                        <FiEdit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => { setSelectedHospital(hospital); setIsDeleteOpen(true); }}
+                        className="p-1.5 text-slate-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded transition-colors"
+                        aria-label="Delete"
+                      >
+                        <FiTrash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2 mb-6 flex-1">
@@ -265,10 +272,10 @@ const HospitalsPage = () => {
         <EmptyState
           icon={FiMapPin}
           title="No hospitals found"
-          description={searchQuery || filterCity || filterDistrict ? "No hospitals matched your filters. Try adjusting your search parameters." : "Get started by adding a new hospital to your directory."}
-          actionLabel={!searchQuery && !filterCity && !filterDistrict ? "Add Hospital" : "Clear Filters"}
+          description={searchQuery || filterCity || filterDistrict ? "No hospitals matched your filters. Try adjusting your search parameters." : isAdmin ? "Get started by adding a new hospital to your directory." : "No hospitals available."}
+          actionLabel={!searchQuery && !filterCity && !filterDistrict && isAdmin ? "Add Hospital" : "Clear Filters"}
           onAction={() => {
-            if (!searchQuery && !filterCity && !filterDistrict) handleOpenForm(null);
+            if (!searchQuery && !filterCity && !filterDistrict && isAdmin) handleOpenForm(null);
             else { setSearchQuery(''); setFilterCity(''); setFilterDistrict(''); }
           }}
         />
