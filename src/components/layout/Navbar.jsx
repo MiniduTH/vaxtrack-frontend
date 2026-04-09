@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMenu, FiBell, FiUser, FiLogOut, FiMoon, FiSun } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../../store/useAuthStore';
 
-const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } }) => {
+const Navbar = ({ toggleSidebar, user = { name: 'Guest', role: 'Public' } }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -45,8 +49,8 @@ const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } })
   };
 
   const handleLogout = () => {
-    // Add logic here to clear auth tokens and route to login
-    console.log('Logging out...');
+    logout();
+    navigate('/login');
   };
 
   return (

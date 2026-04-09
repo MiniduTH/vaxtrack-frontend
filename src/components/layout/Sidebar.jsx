@@ -10,7 +10,7 @@ import {
   FiMapPin 
 } from 'react-icons/fi';
 
-const Sidebar = ({ isOpen, toggleSidebar, userRole = 'patient' }) => {
+const Sidebar = ({ isOpen, toggleSidebar, userRole = 'Public' }) => {
   // Define navigation links based on roles
   const getNavLinks = (role) => {
     const commonLinks = [
@@ -22,6 +22,9 @@ const Sidebar = ({ isOpen, toggleSidebar, userRole = 'patient' }) => {
       { name: 'Hospitals', path: '/dashboard/hospitals', icon: <FiMapPin className="w-5 h-5" /> },
       { name: 'Clinics', path: '/dashboard/clinics', icon: <FiActivity className="w-5 h-5" /> },
       { name: 'All Records', path: '/dashboard/records', icon: <FiActivity className="w-5 h-5" /> },
+      { name: 'Vaccines', path: '/dashboard/vaccines', icon: <FiActivity className="w-5 h-5" /> },
+      { name: 'Batches', path: '/dashboard/inventory/batches', icon: <FiActivity className="w-5 h-5" /> },
+      { name: 'Low Stock', path: '/dashboard/inventory/low-stock', icon: <FiActivity className="w-5 h-5" /> },
       { name: 'Monitor Side Effects', path: '/dashboard/side-effects/admin', icon: <FiActivity className="w-5 h-5" /> },
       { name: 'User Management', path: '/dashboard/users', icon: <FiUsers className="w-5 h-5" /> },
       { name: 'Settings', path: '/dashboard/settings', icon: <FiSettings className="w-5 h-5" /> },
@@ -31,6 +34,8 @@ const Sidebar = ({ isOpen, toggleSidebar, userRole = 'patient' }) => {
       ...commonLinks,
       { name: 'Clinic Management', path: '/dashboard/clinics', icon: <FiActivity className="w-5 h-5" /> },
       { name: 'All Records', path: '/dashboard/records', icon: <FiActivity className="w-5 h-5" /> },
+      { name: 'Batches', path: '/dashboard/inventory/batches', icon: <FiActivity className="w-5 h-5" /> },
+      { name: 'Low Stock', path: '/dashboard/inventory/low-stock', icon: <FiActivity className="w-5 h-5" /> },
       { name: 'Monitor Side Effects', path: '/dashboard/side-effects/admin', icon: <FiActivity className="w-5 h-5" /> },
       { name: 'Appointments', path: '/dashboard/appointments', icon: <FiCalendar className="w-5 h-5" /> },
     ];
@@ -41,15 +46,16 @@ const Sidebar = ({ isOpen, toggleSidebar, userRole = 'patient' }) => {
       { name: 'Find Hospitals', path: '/dashboard/find-hospitals', icon: <FiMapPin className="w-5 h-5" /> },
       { name: 'Health Records', path: '/dashboard/records', icon: <FiActivity className="w-5 h-5" /> },
       { name: 'Vaccination History', path: '/dashboard/history', icon: <FiActivity className="w-5 h-5" /> },
+      { name: 'Dependents', path: '/dashboard/dependents', icon: <FiUsers className="w-5 h-5" /> },
       { name: 'Report Side Effect', path: '/dashboard/side-effects', icon: <FiActivity className="w-5 h-5" /> },
     ];
 
     switch (role) {
-      case 'admin':
+      case 'Admin':
         return adminLinks;
-      case 'staff':
+      case 'HospitalStaff':
         return staffLinks;
-      case 'patient':
+      case 'Public':
       default:
         return patientLinks;
     }
