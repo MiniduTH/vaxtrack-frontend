@@ -361,14 +361,27 @@ const HospitalsPage = () => {
               </div>
             </div>
 
-            {/* Visual Static Map Placeholder*/}
-            <div className="w-full h-[300px] bg-slate-200 dark:bg-slate-800 rounded-xl mt-4 relative overflow-hidden flex items-center justify-center group cursor-pointer border border-border">
-              <div className="absolute inset-0 bg-blue-100 dark:bg-slate-800 opacity-50" style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-              <div className="relative z-10 flex flex-col items-center p-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-lg shadow-soft text-center group-hover:scale-105 transition-transform duration-300">
-                <FiMapPin className="w-8 h-8 text-danger-500 mb-2 drop-shadow-md animate-bounce" />
-                <p className="font-semibold">{selectedHospital.name}</p>
-                <p className="text-xs text-slate-500 mt-1">Map integration active on ({selectedHospital.latitude},{selectedHospital.longitude})</p>
-              </div>
+            {/* Visual Interactive Map */}
+            <div className="w-full h-[300px] bg-slate-200 dark:bg-slate-800 rounded-xl mt-4 relative overflow-hidden border border-border">
+              {selectedHospital.latitude && selectedHospital.longitude ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  scrolling="no"
+                  marginHeight="0"
+                  marginWidth="0"
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(selectedHospital.longitude) - 0.03}%2C${parseFloat(selectedHospital.latitude) - 0.03}%2C${parseFloat(selectedHospital.longitude) + 0.03}%2C${parseFloat(selectedHospital.latitude) + 0.03}&layer=mapnik&marker=${selectedHospital.latitude}%2C${selectedHospital.longitude}`}
+                  className="rounded-xl w-full h-full"
+                  title={`Map showing ${selectedHospital.name}`}
+                ></iframe>
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-slate-50/50 dark:bg-slate-900/50 text-center">
+                  <FiMapPin className="w-8 h-8 text-slate-400 mb-2" />
+                  <p className="font-semibold text-slate-600 dark:text-slate-300">Location not specified</p>
+                  <p className="text-xs text-slate-500 mt-1">Please edit the hospital to add map coordinates.</p>
+                </div>
+              )}
             </div>
           </div>
         )}
