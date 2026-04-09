@@ -1,20 +1,10 @@
 import api from './axiosInstance';
 
-export const authApi = {
-  login: async (credentials) => {
-    const response = await api.post('/auth/login', credentials);
-    return response.data;
-  },
+// POST /api/users/login → { _id, name, email, role, token }
+export const loginUser = (credentials) => api.post('/users/login', credentials);
 
-  register: async (userData) => {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
-  },
+// POST /api/users → { _id, name, email, role, token }
+export const registerUser = (userData) => api.post('/users', userData);
 
-  getProfile: async () => {
-    const response = await api.get('/auth/profile');
-    return response.data;
-  },
-};
-
-export default authApi;
+// GET /api/users/profile → user object (protected)
+export const getProfile = () => api.get('/users/profile');

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { FiMenu, FiBell, FiUser, FiLogOut, FiMoon, FiSun } from 'react-icons/fi';
+import useAuthStore from '../../store/useAuthStore';
 
 const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -44,9 +46,13 @@ const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } })
     }
   };
 
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
   const handleLogout = () => {
-    // Add logic here to clear auth tokens and route to login
-    console.log('Logging out...');
+    logout();
+    setIsDropdownOpen(false);
+    navigate('/login', { replace: true });
   };
 
   return (

@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { FiUser, FiMail, FiLock, FiPhone, FiMapPin, FiCreditCard, FiShield } from 'react-icons/fi';
 import useAuthStore from '../../store/useAuthStore';
-import authApi from '../../api/authApi';
+import { registerUser } from '../../api/authApi';
 
 const RegisterPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,16 +15,12 @@ const RegisterPage = () => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const res = await authApi.register(data);
-      // Automatically log the user in after registration (assuming backend returns user + token)
-      if (res.token) {
-        setLogin(res.user, res.token);
-        toast.success('Registration successful! Welcome to VaxTrack.');
-        navigate('/');
-      } else {
-        toast.success('Registration successful! Please log in.');
-        navigate('/login');
-      }
+      const res = await registerUser(data);
+      // Backend returns { _id, name, email, role, token } directly
+      const { token, ...user } = res.data;
+      setLogin(user, token);
+      toast.success('Account created! Welcome to VaxTrack.');
+      navigate('/dashboard', { replace: true });
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed. Please check your inputs.';
       toast.error(message);
@@ -142,9 +138,9 @@ const RegisterPage = () => {
                   id="role"
                   className="pl-10 block w-full sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none bg-white transition-shadow"
                   {...register('role', { required: 'Role is required' })}
-                  defaultValue="Public"
+                  defaultValue="User"
                 >
-                  <option value="Public">Public (Patient)</option>
+                  <option value="User">Public (Patient)</option>
                   <option value="HospitalStaff">Hospital Staff</option>
                   <option value="Admin">System Admin</option>
                 </select>
