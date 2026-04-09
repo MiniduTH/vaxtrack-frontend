@@ -37,7 +37,7 @@ const DependentsPage = () => {
   const openEditModal = (dep) => {
     // Format date specifically for input type="date" (YYYY-MM-DD)
     const formattedDate = dep.dateOfBirth ? new Date(dep.dateOfBirth).toISOString().split('T')[0] : '';
-    reset({ ...dep, dateOfBirth: formattedDate });
+    reset({ ...dep, dateOfBirth: formattedDate, gender: dep.gender || 'Female' });
     setEditingId(dep._id || dep.id);
     setIsModalOpen(true);
   };
@@ -213,6 +213,18 @@ const DependentsPage = () => {
                   <option value="Spouse">Spouse</option>
                   <option value="Parent">Parent</option>
                   <option value="Sibling">Sibling</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
+                <select
+                  {...register('gender', { required: 'Required' })}
+                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+                  defaultValue="Female"
+                >
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
                 </select>
               </div>
 

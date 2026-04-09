@@ -42,7 +42,7 @@ const RecordsPage = () => {
     hospitalId: '',
   });
 
-  const isStaffOrAdmin = user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.STAFF;
+  const isStaffOrAdmin = user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.STAFF || user?.role === 'HospitalStaff' || user?.role === 'Staff';
 
   const fetchRecords = async () => {
     setLoading(true);

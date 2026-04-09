@@ -16,9 +16,9 @@ const RegisterPage = () => {
     try {
       setIsLoading(true);
       const res = await authApi.register(data);
-      // Automatically log the user in after registration (assuming backend returns user + token)
       if (res.token) {
-        setLogin(res.user, res.token);
+        const { token, ...user } = res;
+        setLogin(user, token);
         toast.success('Registration successful! Welcome to VaxTrack.');
         navigate('/dashboard');
       } else {
