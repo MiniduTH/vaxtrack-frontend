@@ -2,15 +2,11 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import useAuthStore from '../../store/useAuthStore';
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Example user state (would normally come from auth context)
-  const [user] = useState({
-    name: 'Sarah Connor',
-    role: 'patient', // 'admin' | 'staff' | 'patient'
-  });
+  const user = useAuthStore((state) => state.user) || { name: 'Guest', role: 'Public' };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
