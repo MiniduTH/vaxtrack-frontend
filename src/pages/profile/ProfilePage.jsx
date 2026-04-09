@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { FiUser, FiMail, FiPhone, FiMapPin, FiCreditCard, FiShield, FiEdit2, FiSave, FiX } from 'react-icons/fi';
 import useAuthStore from '../../store/useAuthStore';
-import authApi from '../../api/authApi';
+import { getProfile } from '../../api/authApi';
 
 const ProfilePage = () => {
   const { user, login } = useAuthStore();
@@ -23,7 +23,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const data = await authApi.getProfile();
+        const data = await getProfile();
         // Assume data contains the user object
         setProfileData(data.user || data);
         reset(data.user || data);

@@ -138,9 +138,9 @@ const RegisterPage = () => {
                   id="role"
                   className="pl-10 block w-full sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none bg-white transition-shadow"
                   {...register('role', { required: 'Role is required' })}
-                  defaultValue="User"
+                  defaultValue="Public"
                 >
-                  <option value="User">Public (Patient)</option>
+                  <option value="Public">Public (Patient)</option>
                   <option value="HospitalStaff">Hospital Staff</option>
                   <option value="Admin">System Admin</option>
                 </select>

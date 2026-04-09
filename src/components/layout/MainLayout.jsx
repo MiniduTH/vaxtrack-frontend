@@ -19,7 +19,7 @@ const MainLayout = () => {
       <Sidebar
         isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
-        userRole={user?.role ?? 'User'}
+        userRole={user?.role ?? 'Public'}
       />
 
       {/* Main Content Area */}

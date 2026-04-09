@@ -50,17 +50,18 @@ const getNavLinks = (role) => {
   // Public (default)
   return [
     ...common,
-    { name: 'My Appointments',    path: '/dashboard/appointments', icon: FiCalendar   },
-    { name: 'Book Appointment',   path: '/dashboard/appointments/book', icon: FiActivity },
-    { name: 'My Records',         path: '/dashboard/records',      icon: FiFileText   },
-    { name: 'My Dependents',      path: '/dashboard/dependents',   icon: FiUsers      },
-    { name: 'Side Effects',       path: '/dashboard/side-effects', icon: FiAlertTriangle },
+    { name: 'My Appointments',  path: '/dashboard/appointments',      icon: FiCalendar   },
+    { name: 'Book Appointment', path: '/dashboard/appointments/book', icon: FiActivity   },
+    { name: 'Find Hospital',    path: '/dashboard/hospitals',         icon: FiMapPin     },
+    { name: 'My Records',       path: '/dashboard/records',           icon: FiFileText   },
+    { name: 'My Dependents',    path: '/dashboard/dependents',        icon: FiUsers      },
+    { name: 'Side Effects',     path: '/dashboard/side-effects',      icon: FiAlertTriangle },
   ];
 };
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
-const Sidebar = ({ isOpen, toggleSidebar, userRole = 'User' }) => {
+const Sidebar = ({ isOpen, toggleSidebar, userRole = 'Public' }) => {
   const navLinks = getNavLinks(userRole);
 
   return (

@@ -15,8 +15,9 @@ const DependentsPage = () => {
   const fetchDependents = async () => {
     try {
       setIsLoading(true);
-      const data = await dependentApi.getDependents();
-      setDependents(Array.isArray(data) ? data : data.dependents || []);
+      const res = await dependentApi.getDependents();
+      // Backend returns { success, count, data: [...] }
+      setDependents(Array.isArray(res) ? res : res.data || []);
     } catch (error) {
       toast.error('Failed to load family members');
     } finally {
@@ -29,7 +30,7 @@ const DependentsPage = () => {
   }, []);
 
   const openAddModal = () => {
-    reset({ name: '', nic: '', dateOfBirth: '', relationship: 'Child' });
+    reset({ name: '', nic: '', dateOfBirth: '', relationship: 'Child', gender: '' });
     setEditingId(null);
     setIsModalOpen(true);
   };
@@ -214,6 +215,20 @@ const DependentsPage = () => {
                   <option value="Parent">Parent</option>
                   <option value="Sibling">Sibling</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
+                <select
+                  {...register('gender', { required: 'Gender is required' })}
+                  className={`w-full p-2.5 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none ${errors.gender ? 'border-red-500' : 'border-gray-200'}`}
+                >
+                  <option value="">Select gender…</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.gender && <p className="text-red-500 text-xs mt-1">{errors.gender.message}</p>}
               </div>
 
               <div>

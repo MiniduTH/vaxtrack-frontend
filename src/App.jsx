@@ -4,17 +4,34 @@ import { MainLayout } from './components/layout';
 import ProtectedRoute from './routes/ProtectedRoute';
 import RoleRoute from './routes/RoleRoute';
 import {
-  HospitalsPage,
-  ClinicsPage,
+  // Shared
   NotFoundPage,
+
+  // Saniru — Appointments & Dashboard
   DashboardPage,
   AppointmentsPage,
   BookAppointmentPage,
   QueueBoardPage,
-} from './pages';
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
 
+  // Nethmi — Hospitals & Clinics
+  HospitalsPage,
+  ClinicsPage,
+
+  // Kaveen — Records, Dependents, Side Effects, Profile
+  RecordsPage,
+  DependentsPage,
+  MySideEffectsPage,
+  AdminSideEffectsPage,
+  ProfilePage,
+
+  // Minidu — Vaccines, Batches, Inventory
+  VaccinesPage,
+  BatchesPage,
+  InventoryDashboard,
+  HistoryPage,
+} from './pages';
+import LoginPage    from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 
 function App() {
   return (
@@ -32,8 +49,6 @@ function App() {
           },
         }}
       />
-
-
 
       <Routes>
         {/* Root redirect */}
@@ -55,15 +70,15 @@ function App() {
           {/* Dashboard home */}
           <Route index element={<DashboardPage />} />
 
-          {/* ── Nethmi's routes ── */}
+          {/* ── Nethmi — Hospitals & Clinics ── */}
           <Route path="hospitals" element={<HospitalsPage />} />
           <Route path="clinics"   element={<ClinicsPage />} />
 
-          {/* ── Saniru's routes — Appointments ── */}
+          {/* ── Saniru — Appointments ── */}
           <Route path="appointments"      element={<AppointmentsPage />} />
           <Route path="appointments/book" element={<BookAppointmentPage />} />
 
-          {/* Queue board: accessible by HospitalStaff and Admin */}
+          {/* Queue board: HospitalStaff and Admin only */}
           <Route
             path="queue"
             element={
@@ -80,9 +95,52 @@ function App() {
               </RoleRoute>
             }
           />
+
+          {/* ── Kaveen — Records, Dependents, Side Effects, Profile ── */}
+          <Route path="records"    element={<RecordsPage />} />
+          <Route path="dependents" element={<DependentsPage />} />
+          <Route path="profile"    element={<ProfilePage />} />
+
+          {/* Side effects: Public users see their own; Staff/Admin see all */}
+          <Route path="side-effects" element={<MySideEffectsPage />} />
+          <Route
+            path="side-effects/admin"
+            element={
+              <RoleRoute roles={['HospitalStaff', 'Admin']}>
+                <AdminSideEffectsPage />
+              </RoleRoute>
+            }
+          />
+
+          {/* ── Minidu — Vaccines, Batches, Inventory ── */}
+          <Route
+            path="vaccines"
+            element={
+              <RoleRoute roles={['Admin']}>
+                <VaccinesPage />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="batches"
+            element={
+              <RoleRoute roles={['HospitalStaff', 'Admin']}>
+                <BatchesPage />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="inventory"
+            element={
+              <RoleRoute roles={['HospitalStaff', 'Admin']}>
+                <InventoryDashboard />
+              </RoleRoute>
+            }
+          />
+          <Route path="history" element={<HistoryPage />} />
         </Route>
 
-        {/* 404 */}
+        {/* 404 catch-all */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
