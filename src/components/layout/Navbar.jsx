@@ -1,14 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMenu, FiBell, FiUser, FiLogOut, FiMoon, FiSun } from 'react-icons/fi';
-import { useNavigate, Link } from 'react-router-dom';
-import useAuthStore from '../../store/useAuthStore';
 
-const Navbar = ({ toggleSidebar, user = { name: 'Guest', role: 'Public' } }) => {
+const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate();
-  const logout = useAuthStore((state) => state.logout);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -49,8 +45,8 @@ const Navbar = ({ toggleSidebar, user = { name: 'Guest', role: 'Public' } }) => 
   };
 
   const handleLogout = () => {
-    logout();
-    navigate('/login');
+    // Add logic here to clear auth tokens and route to login
+    console.log('Logging out...');
   };
 
   return (
@@ -127,10 +123,10 @@ const Navbar = ({ toggleSidebar, user = { name: 'Guest', role: 'Public' } }) => 
                 <p className="text-xs text-slate-500 truncate mt-0.5 capitalize">{user.role}</p>
               </div>
               
-              <Link to="/dashboard/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" onClick={() => setIsDropdownOpen(false)}>
+              <a href="#profile" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                 <FiUser className="w-4 h-4" />
                 My Profile
-              </Link>
+              </a>
               
               <div className="h-px bg-border my-1" />
               
