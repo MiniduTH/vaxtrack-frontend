@@ -19,7 +19,7 @@ const LoginPage = () => {
       // Backend should return user object and JWT token
       setLogin(res.user, res.token);
       toast.success('Login successful!');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
       toast.error(message);
