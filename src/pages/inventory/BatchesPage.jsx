@@ -34,9 +34,9 @@ const BatchesPage = () => {
           batchApi.getBatches()
         ]);
         
-        setVaccines(Array.isArray(vaxData) ? vaxData : vaxData.vaccines || []);
-        setHospitals(Array.isArray(hospData) ? hospData : hospData.hospitals || []);
-        setBatches(Array.isArray(batchData) ? batchData : batchData.batches || []);
+        setVaccines(Array.isArray(vaxData) ? vaxData : vaxData.data || vaxData.vaccines || []);
+        setHospitals(Array.isArray(hospData) ? hospData : hospData.data || hospData.hospitals || []);
+        setBatches(Array.isArray(batchData) ? batchData : batchData.data || batchData.batches || []);
       } catch (error) {
         toast.error('Failed to load inventory data');
       } finally {
@@ -106,7 +106,7 @@ const BatchesPage = () => {
       
       // Reload batches
       const response = await batchApi.getBatches();
-      setBatches(Array.isArray(response) ? response : response.batches || []);
+      setBatches(Array.isArray(response) ? response : response.data || response.batches || []);
     } catch (error) {
       toast.error('Failed to save batch details');
     }
@@ -118,7 +118,7 @@ const BatchesPage = () => {
       await batchApi.deleteBatch(id);
       toast.success('Batch deleted');
       const response = await batchApi.getBatches();
-      setBatches(Array.isArray(response) ? response : response.batches || []);
+      setBatches(Array.isArray(response) ? response : response.data || response.batches || []);
     } catch (error) {
       toast.error('Failed to delete batch');
     }

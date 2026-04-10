@@ -20,7 +20,7 @@ const VaccinesPage = () => {
     try {
       setIsLoading(true);
       const data = await vaccineApi.getVaccines();
-      setVaccines(Array.isArray(data) ? data : data.vaccines || []);
+      setVaccines(Array.isArray(data) ? data : data.data || data.vaccines || []);
     } catch (error) {
       toast.error('Failed to load vaccines catalog');
     } finally {

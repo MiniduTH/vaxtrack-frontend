@@ -38,7 +38,7 @@ const InventoryDashboard = () => {
           // Fallback calculation via Batches CRUD if analytics endpoints aren't live
           console.warn('Analytics API unavailable. Calculating dashboard from raw batches...', apiErr);
           const rawBatches = await batchApi.getBatches();
-          const batchList = Array.isArray(rawBatches) ? rawBatches : rawBatches.batches || [];
+          const batchList = Array.isArray(rawBatches) ? rawBatches : rawBatches.data || rawBatches.batches || [];
           
           total = batchList.length;
           
