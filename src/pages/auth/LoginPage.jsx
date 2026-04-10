@@ -1,27 +1,30 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { FiMail, FiLock, FiLogIn } from 'react-icons/fi';
 import useAuthStore from '../../store/useAuthStore';
-import authApi from '../../api/authApi';
+import { loginUser } from '../../api/authApi';
 
 const LoginPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const setLogin = useAuthStore((state) => state.login);
+  const from = location.state?.from?.pathname || '/dashboard';
 
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const res = await authApi.login(data);
-      // Backend should return user object and JWT token
-      setLogin(res.user, res.token);
-      toast.success('Login successful!');
-      navigate('/');
+      const res = await loginUser(data);
+      // Backend returns { _id, name, email, role, token } directly
+      const { token, ...user } = res.data;
+      setLogin(user, token);
+      toast.success(`Welcome back, ${user.name.split(' ')[0]}!`);
+      navigate(from, { replace: true });
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      const message = error.response?.data?.message || 'Invalid email or password';
       toast.error(message);
     } finally {
       setIsLoading(false);
