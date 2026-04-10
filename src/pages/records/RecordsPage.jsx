@@ -525,13 +525,79 @@ const RecordsPage = () => {
   const vaccineDisplay = (v) => {
     if (!v) return 'Unknown';
     if (typeof v === 'object') return v.name || v._id;
-    return v;
+    // v is a raw ObjectId string — look up name from loaded vaccines
+    const found = allVaccines.find((vac) => String(vac._id) === String(v) || String(vac.id) === String(v));
+    return found ? found.name : v;
   };
 
   const hospitalDisplay = (h) => {
     if (!h) return 'Unknown';
     if (typeof h === 'object') return h.name || h._id;
-    return h;
+    // h is a raw ObjectId string — look up name from loaded hospitals
+    const found = allHospitals.find((hosp) => String(hosp._id) === String(h) || String(hosp.id) === String(h));
+    return found ? found.name : h;
+  };
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // HELPER: Calculate next dose info from vaccine's daysBetweenDoses
+  // Uses populated vaccineId which now includes dosesRequired & daysBetweenDoses
+  // ═════════════════════════════════════════════════════════════════════════
+  const extractId = (field) => {
+    if (!field) return null;
+    if (typeof field === 'object') return String(field._id || field.id || field);
+    return String(field);
+  };
+
+  const getNextDoseInfo = (record) => {
+    // vaccineId is now populated as an object with { _id, name, dosesRequired, daysBetweenDoses }
+    const vaccine = typeof record.vaccineId === 'object' ? record.vaccineId : null;
+    if (!vaccine || vaccine.dosesRequired == null || vaccine.daysBetweenDoses == null) {
+      // Fallback if somehow not populated
+      if (record.nextDoseDate) return { type: 'date', date: record.nextDoseDate };
+      return { type: 'unknown' };
+    }
+
+    const { dosesRequired, daysBetweenDoses } = vaccine;
+    const vId = extractId(record.vaccineId);
+    const pId = extractId(record.patientId);
+
+    // Count how many records exist for this patient+vaccine (dose number)
+    const sameVaccineRecords = records.filter((r) => {
+      const rVId = extractId(r.vaccineId);
+      const rPId = extractId(r.patientId);
+      if (isStaffOrAdmin) {
+        return rVId === vId && rPId === pId;
+      }
+      return rVId === vId;
+    });
+
+    // Sort by dateAdministered ascending to determine dose order
+    const sorted = [...sameVaccineRecords].sort(
+      (a, b) => new Date(a.dateAdministered) - new Date(b.dateAdministered)
+    );
+    const doseNumber = sorted.findIndex((r) => r._id === record._id) + 1;
+
+    // If this record is the last dose required (or more) → fully vaccinated
+    if (dosesRequired <= 1 || doseNumber >= dosesRequired) {
+      return { type: 'complete', doseNumber, dosesRequired, vaccineName: vaccine.name };
+    }
+
+    // Calculate next dose date: dateAdministered + daysBetweenDoses
+    if (record.dateAdministered && daysBetweenDoses > 0) {
+      const administered = new Date(record.dateAdministered);
+      const nextDate = new Date(administered);
+      nextDate.setDate(nextDate.getDate() + daysBetweenDoses);
+      const isOverdue = nextDate < new Date();
+      return {
+        type: 'due',
+        date: nextDate.toISOString(),
+        doseNumber,
+        dosesRequired,
+        isOverdue,
+      };
+    }
+
+    return { type: 'unknown' };
   };
 
   // ═════════════════════════════════════════════════════════════════════════
@@ -817,8 +883,39 @@ const RecordsPage = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
                           {formatDate(record.dateAdministered)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
-                          {record.nextDoseDate ? formatDate(record.nextDoseDate) : <span className="text-slate-400 italic">N/A</span>}
+                        <td className="px-6 py-4 text-sm max-w-[180px]">
+                          {(() => {
+                            const info = getNextDoseInfo(record);
+                            switch (info.type) {
+                              case 'complete':
+                                return (
+                                  <span className="inline-flex flex-wrap items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-400">
+                                    <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Fully Vaccinated
+                                    <span className="text-[10px] opacity-75">({info.doseNumber}/{info.dosesRequired})</span>
+                                  </span>
+                                );
+                              case 'due':
+                                return (
+                                  <div className="space-y-0.5">
+                                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${
+                                      info.isOverdue
+                                        ? 'bg-danger-50 text-danger-700 dark:bg-danger-500/10 dark:text-danger-400'
+                                        : 'bg-warning-50 text-warning-700 dark:bg-warning-500/10 dark:text-warning-400'
+                                    }`}>
+                                      {info.isOverdue ? 'Overdue' : 'Due'}: {formatDate(info.date)}
+                                    </span>
+                                    <div className="text-[10px] text-slate-500 dark:text-slate-400 pl-1">
+                                      Dose {info.doseNumber} of {info.dosesRequired}
+                                    </div>
+                                  </div>
+                                );
+                              default:
+                                return <span className="text-slate-400 italic">N/A</span>;
+                            }
+                          })()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <div className="flex items-center justify-end gap-1">
