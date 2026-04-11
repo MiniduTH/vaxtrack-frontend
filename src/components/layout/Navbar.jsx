@@ -88,11 +88,11 @@ const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } })
 
         {/* Notifications */}
         <button 
+          onClick={() => navigate('/dashboard/appointments')}
           className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative"
           aria-label="View notifications"
         >
           <FiBell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger-500 ring-2 ring-card"></span>
         </button>
 
         {/* User Dropdown Divider */}

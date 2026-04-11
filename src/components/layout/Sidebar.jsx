@@ -51,7 +51,6 @@ const getNavLinks = (role) => {
   return [
     ...common,
     { name: 'My Appointments',  path: '/dashboard/appointments',      icon: FiCalendar   },
-    { name: 'Book Appointment', path: '/dashboard/appointments/book', icon: FiActivity   },
     { name: 'Find Hospital',    path: '/dashboard/hospitals',         icon: FiMapPin     },
     { name: 'My Records',       path: '/dashboard/records',           icon: FiFileText   },
     { name: 'My Dependents',    path: '/dashboard/dependents',        icon: FiUsers      },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, NavLink } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   FiArrowLeft, FiArrowRight, FiCheck, FiCalendar, FiClock,
@@ -349,7 +349,37 @@ const BookAppointmentPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="space-y-6">
+
+      {/* Appointment sub-tab nav */}
+      <div className="flex gap-1 border-b border-border">
+        <NavLink
+          to="/dashboard/appointments"
+          end
+          className={({ isActive }) =>
+            `px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+              isActive
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-slate-500 hover:text-foreground dark:text-slate-400'
+            }`
+          }
+        >
+          My Appointments
+        </NavLink>
+        <NavLink
+          to="/dashboard/appointments/book"
+          className={({ isActive }) =>
+            `px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+              isActive
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-slate-500 hover:text-foreground dark:text-slate-400'
+            }`
+          }
+        >
+          Book Appointment
+        </NavLink>
+      </div>
+
       {/* Back nav */}
       {step < 4 && (
         <Link
