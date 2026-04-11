@@ -340,7 +340,7 @@ const ClinicsPage = () => {
            />
            
            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-             <FormInput id="clinic-date" label="Date" type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required />
+             <FormInput id="clinic-date" label="Date" type="date" min={new Date().toISOString().split('T')[0]} value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required />
              <FormInput id="start-time" label="Start Time" type="time" value={formData.startTime} onChange={e => setFormData({...formData, startTime: e.target.value})} required />
              <FormInput id="end-time" label="End Time" type="time" value={formData.endTime} onChange={e => setFormData({...formData, endTime: e.target.value})} required />
            </div>
