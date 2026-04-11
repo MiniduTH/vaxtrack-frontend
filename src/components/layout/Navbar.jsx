@@ -129,10 +129,14 @@ const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } })
                 <p className="text-xs text-slate-500 truncate mt-0.5 capitalize">{user.role}</p>
               </div>
               
-              <a href="#profile" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+              <Link
+                to="/dashboard/profile"
+                onClick={() => setIsDropdownOpen(false)}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+              >
                 <FiUser className="w-4 h-4" />
                 My Profile
-              </a>
+              </Link>
               
               <div className="h-px bg-border my-1" />
               
