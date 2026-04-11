@@ -33,10 +33,10 @@ const RegisterPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-xl w-full space-y-8 bg-card p-8 rounded-xl shadow-lg border border-border">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground tracking-tight">
             Create an Account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-secondary-500 dark:text-slate-400">
             Already have an account?{' '}
             <Link to="/login" className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-colors">
               Sign in here
