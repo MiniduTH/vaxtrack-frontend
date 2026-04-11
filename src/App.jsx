@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { MainLayout } from './components/layout';
 import ProtectedRoute from './routes/ProtectedRoute';
 import RoleRoute from './routes/RoleRoute';
+import useAuthStore from './store/useAuthStore';
 import {
   // Shared
   NotFoundPage,
@@ -34,7 +35,21 @@ import {
 import LoginPage    from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 
+/**
+ * Gateway component for /dashboard/side-effects.
+ * Staff and Admin are silently redirected to the admin monitoring page.
+ * Public patients see their own reporting form.
+ */
+const SideEffectsGateway = () => {
+  const user = useAuthStore((state) => state.user);
+  if (user?.role === 'HospitalStaff' || user?.role === 'Admin') {
+    return <Navigate to="/dashboard/side-effects/admin" replace />;
+  }
+  return <MySideEffectsPage />;
+};
+
 function App() {
+
   return (
     <BrowserRouter>
       {/* Global Toast notifications */}
@@ -112,8 +127,11 @@ function App() {
           <Route path="dependents" element={<DependentsPage />} />
           <Route path="profile"    element={<ProfilePage />} />
 
-          {/* Side effects: Public users see their own; Staff/Admin see all */}
-          <Route path="side-effects" element={<MySideEffectsPage />} />
+          {/* Side effects: auto-redirect Staff/Admin to the admin view */}
+          <Route
+            path="side-effects"
+            element={<SideEffectsGateway />}
+          />
           <Route
             path="side-effects/admin"
             element={

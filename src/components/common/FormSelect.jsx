@@ -30,11 +30,11 @@ const FormSelect = forwardRef(({
           id={selectId}
           name={name}
           className={`
-            block w-full rounded-xl sm:text-sm appearance-none transition-colors duration-200
+            block w-full rounded-xl sm:text-sm appearance-none transition-colors duration-200 border
             pl-4 pr-10 py-2.5 bg-white dark:bg-slate-900 shadow-sm
             ${error 
               ? 'border-danger-300 text-danger-900 focus:border-danger-500 focus:ring-danger-500 dark:border-danger-500/50 dark:text-danger-400 focus:ring-2' 
-              : 'border-slate-300 text-slate-900 focus:border-primary-500 focus:ring-primary-500 dark:border-slate-700 dark:text-white focus:ring-2'
+              : 'border-slate-300 text-slate-900 focus:border-primary-500 focus:ring-primary-500 dark:border-slate-600 dark:text-white focus:ring-2'
             }
           `}
           aria-invalid={error ? 'true' : 'false'}
