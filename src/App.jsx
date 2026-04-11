@@ -7,6 +7,9 @@ import useAuthStore from './store/useAuthStore';
 import {
   // Shared
   NotFoundPage,
+  LandingPage,
+  PrivacyPolicyPage,
+  TermsOfServicePage,
 
   // Saniru — Appointments & Dashboard
   DashboardPage,
@@ -67,12 +70,14 @@ function App() {
       />
 
       <Routes>
-        {/* Root redirect */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Marketing landing (default entry) */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* ── Public routes (no auth required) ── */}
         <Route path="/login"    element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/privacy"  element={<PrivacyPolicyPage />} />
+        <Route path="/terms"    element={<TermsOfServicePage />} />
 
         {/* ── Protected layout — all authenticated routes live here ── */}
         <Route

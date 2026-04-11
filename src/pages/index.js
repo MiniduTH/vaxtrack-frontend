@@ -24,3 +24,6 @@ export { default as HistoryPage }          from './history/HistoryPage';
 
 // ── Shared ──────────────────────────────────────────────────────────────────
 export { default as NotFoundPage }         from './NotFoundPage';
+export { default as LandingPage }          from './landing/LandingPage';
+export { default as PrivacyPolicyPage }    from './legal/PrivacyPolicyPage';
+export { default as TermsOfServicePage }   from './legal/TermsOfServicePage';
