@@ -16,8 +16,13 @@ import { FiPlus, FiEdit2, FiTrash2, FiCalendar, FiClock, FiActivity, FiUsers } f
 import clinicApi from '../../api/clinicApi';
 import hospitalApi from '../../api/hospitalApi';
 import { toast } from 'react-hot-toast';
+import useAuthStore from '../../store/useAuthStore';
 
 const ClinicsPage = () => {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'Admin';
+  const canWrite = isAdmin || user?.role === 'HospitalStaff';
+
   const [clinics, setClinics] = useState([]);
   const [hospitalsList, setHospitalsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -182,9 +187,11 @@ const ClinicsPage = () => {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Vaccination Clinics</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage scheduled sessions and monitor local capacity.</p>
         </div>
-        <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
-          Schedule Clinic
-        </Button>
+        {canWrite && (
+          <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
+            Schedule Clinic
+          </Button>
+        )}
       </div>
 
       {/* Filters Card */}
@@ -292,12 +299,16 @@ const ClinicsPage = () => {
                   </div>
 
                   <div className="pt-4 border-t border-border mt-auto flex justify-end gap-2">
-                    <Button variant="outline" size="sm" onClick={() => handleOpenForm(clinic)} icon={FiEdit2}>
-                      Edit
-                    </Button>
-                    <Button variant="danger" className="!bg-danger-500/10 !text-danger-600 hover:!bg-danger-500 hover:!text-white border border-danger-200 dark:border-danger-900/50" size="sm" onClick={() => { setSelectedClinic(clinic); setIsDeleteOpen(true); }} icon={FiTrash2}>
-                      Delete
-                    </Button>
+                    {canWrite && (
+                      <Button variant="outline" size="sm" onClick={() => handleOpenForm(clinic)} icon={FiEdit2}>
+                        Edit
+                      </Button>
+                    )}
+                    {isAdmin && (
+                      <Button variant="danger" className="!bg-danger-500/10 !text-danger-600 hover:!bg-danger-500 hover:!text-white border border-danger-200 dark:border-danger-900/50" size="sm" onClick={() => { setSelectedClinic(clinic); setIsDeleteOpen(true); }} icon={FiTrash2}>
+                        Delete
+                      </Button>
+                    )}
                   </div>
                 </CardBody>
               </Card>

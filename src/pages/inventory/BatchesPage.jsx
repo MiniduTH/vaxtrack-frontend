@@ -5,8 +5,13 @@ import { FiBox, FiPlus, FiEdit2, FiTrash2, FiX, FiFilter, FiSearch, FiAlertTrian
 import batchApi from '../../api/batchApi';
 import vaccineApi from '../../api/vaccineApi';
 import hospitalApi from '../../api/hospitalApi';
+import useAuthStore from '../../store/useAuthStore';
 
 const BatchesPage = () => {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'Admin';
+  const canWrite = isAdmin || user?.role === 'HospitalStaff';
+
   // State
   const [batches, setBatches] = useState([]);
   const [vaccines, setVaccines] = useState([]);
@@ -162,12 +167,14 @@ const BatchesPage = () => {
           </h1>
           <p className="text-secondary-500 dark:text-slate-400 text-sm mt-1">Manage stock, track expiry dates, and monitor hospital capacities.</p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-400 transition shadow-sm font-medium"
-        >
-          <FiPlus className="mr-2" /> Add New Batch
-        </button>
+        {canWrite && (
+          <button
+            onClick={openAddModal}
+            className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-400 transition shadow-sm font-medium"
+          >
+            <FiPlus className="mr-2" /> Add New Batch
+          </button>
+        )}
       </div>
 
       {/* FILTER BAR */}
@@ -243,7 +250,7 @@ const BatchesPage = () => {
                   <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Hospital</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Status & Quantity</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Dates</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                  {canWrite && <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>}
                 </tr>
               </thead>
               <tbody className="bg-card divide-y divide-border">
@@ -268,14 +275,20 @@ const BatchesPage = () => {
                       <div className="mb-1"><span className="font-semibold">Arr:</span> {new Date(batch.arrivalDate).toLocaleDateString()}</div>
                       <div><span className="font-semibold text-danger-400">Exp:</span> {new Date(batch.expiryDate).toLocaleDateString()}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <button onClick={() => openEditModal(batch)} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mx-3 p-1">
-                        <FiEdit2 size={16} />
-                      </button>
-                      <button onClick={() => handleDelete(batch._id || batch.id)} className="text-danger-500 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 p-1">
-                        <FiTrash2 size={16} />
-                      </button>
-                    </td>
+                    {canWrite && (
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                        {canWrite && (
+                          <button onClick={() => openEditModal(batch)} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mx-3 p-1">
+                            <FiEdit2 size={16} />
+                          </button>
+                        )}
+                        {isAdmin && (
+                          <button onClick={() => handleDelete(batch._id || batch.id)} className="text-danger-500 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 p-1">
+                            <FiTrash2 size={16} />
+                          </button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

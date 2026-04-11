@@ -4,8 +4,11 @@ import toast from 'react-hot-toast';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiLayers, FiInfo, FiClock, FiImage, FiGrid, FiList } from 'react-icons/fi';
 import vaccineApi from '../../api/vaccineApi';
 import { Pagination } from '../../components/common';
+import useAuthStore from '../../store/useAuthStore';
 
 const VaccinesPage = () => {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'Admin';
   const [vaccines, setVaccines] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -148,12 +151,14 @@ const VaccinesPage = () => {
               <FiList />
             </button>
           </div>
-          <button
-            onClick={openAddModal}
-            className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-400 transition shadow-sm font-medium"
-          >
-            <FiPlus className="mr-2" /> Add Vaccine
-          </button>
+          {isAdmin && (
+            <button
+              onClick={openAddModal}
+              className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-400 transition shadow-sm font-medium"
+            >
+              <FiPlus className="mr-2" /> Add Vaccine
+            </button>
+          )}
         </div>
       </div>
 
@@ -189,6 +194,7 @@ const VaccinesPage = () => {
                     <span className="text-sm">No Image</span>
                   </div>
                 )}
+{isAdmin && (
                 <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button onClick={() => openEditModal(vax)} className="p-2 bg-card rounded-full text-primary-600 dark:text-primary-400 shadow hover:bg-primary-50 dark:hover:bg-primary-500/10">
                     <FiEdit2 size={14} />
@@ -197,6 +203,7 @@ const VaccinesPage = () => {
                     <FiTrash2 size={14} />
                   </button>
                 </div>
+                )}
               </div>
               <div className="p-5 flex-1 flex flex-col">
                 <h3 className="text-lg font-bold text-foreground leading-tight">{vax.name}</h3>
@@ -257,12 +264,16 @@ const VaccinesPage = () => {
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button onClick={() => openEditModal(vax)} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mr-4">
-                      <FiEdit2 size={16} />
-                    </button>
-                    <button onClick={() => handleDelete(vax._id || vax.id)} className="text-danger-500 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300">
-                      <FiTrash2 size={16} />
-                    </button>
+                    {isAdmin && (
+                      <>
+                        <button onClick={() => openEditModal(vax)} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mr-4">
+                          <FiEdit2 size={16} />
+                        </button>
+                        <button onClick={() => handleDelete(vax._id || vax.id)} className="text-danger-500 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300">
+                          <FiTrash2 size={16} />
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
