@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiLayers, FiInfo, FiClock, FiImage, FiGrid, FiList } from 'react-icons/fi';
 import vaccineApi from '../../api/vaccineApi';
-import { Pagination } from '../../components/common';
+import { Pagination, SearchBar } from '../../components/common';
 
 const VaccinesPage = () => {
   const [vaccines, setVaccines] = useState([]);
@@ -11,19 +11,52 @@ const VaccinesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [searchQuery, setSearchQuery] = useState('');
+  const [manufacturerFilter, setManufacturerFilter] = useState('all');
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = viewMode === 'grid' ? 8 : 6;
 
+  const manufacturerOptions = React.useMemo(() => {
+    const manufacturers = [...new Set(
+      vaccines
+        .map((vaccine) => vaccine.manufacturer?.trim())
+        .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b));
+
+    return ['all', ...manufacturers];
+  }, [vaccines]);
+
+  const filteredVaccines = React.useMemo(() => {
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+
+    return vaccines.filter((vaccine) => {
+      const matchesSearch =
+        normalizedSearch.length === 0 ||
+        [vaccine.name, vaccine.manufacturer, vaccine.description]
+          .filter(Boolean)
+          .some((value) => value.toLowerCase().includes(normalizedSearch));
+
+      const matchesManufacturer =
+        manufacturerFilter === 'all' || vaccine.manufacturer === manufacturerFilter;
+
+      return matchesSearch && matchesManufacturer;
+    });
+  }, [vaccines, searchQuery, manufacturerFilter]);
+
   const paginatedVaccines = React.useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
-    return vaccines.slice(start, start + itemsPerPage);
-  }, [vaccines, currentPage, itemsPerPage]);
+    return filteredVaccines.slice(start, start + itemsPerPage);
+  }, [filteredVaccines, currentPage, itemsPerPage]);
 
   React.useEffect(() => {
     setCurrentPage(1);
   }, [viewMode]);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, manufacturerFilter]);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   
@@ -157,6 +190,41 @@ const VaccinesPage = () => {
         </div>
       </div>
 
+      {!isLoading && vaccines.length > 0 && (
+        <div className="mb-6 rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search vaccines by name, manufacturer, or description"
+              className="flex-1"
+            />
+
+            <div className="w-full lg:w-72">
+              <label htmlFor="manufacturer-filter" className="mb-1 block text-sm font-medium text-secondary-700 dark:text-slate-300">
+                Filter by manufacturer
+              </label>
+              <select
+                id="manufacturer-filter"
+                value={manufacturerFilter}
+                onChange={(e) => setManufacturerFilter(e.target.value)}
+                className="block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-foreground shadow-sm transition-colors duration-200 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-slate-700 dark:bg-slate-900"
+              >
+                {manufacturerOptions.map((manufacturer) => (
+                  <option key={manufacturer} value={manufacturer}>
+                    {manufacturer === 'all' ? 'All manufacturers' : manufacturer}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <p className="mt-3 text-sm text-secondary-500 dark:text-slate-400">
+            Showing {filteredVaccines.length} of {vaccines.length} vaccines
+          </p>
+        </div>
+      )}
+
       {isLoading ? (
         <div className="flex justify-center p-12">
           <svg className="animate-spin h-8 w-8 text-primary-600 dark:text-primary-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -171,6 +239,22 @@ const VaccinesPage = () => {
           <p className="mb-4 text-sm">The catalog is currently empty.</p>
           <button onClick={openAddModal} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm">
             + Add to catalog
+          </button>
+        </div>
+      ) : filteredVaccines.length === 0 ? (
+        <div className="bg-card rounded-xl border border-dashed border-border p-12 text-center text-secondary-500 dark:text-slate-400">
+          <FiInfo className="mx-auto mb-4 h-12 w-12 text-secondary-400 dark:text-slate-500" />
+          <h3 className="mb-1 text-lg font-medium text-foreground">No vaccines match your filters</h3>
+          <p className="mb-4 text-sm">Try a different search term or switch the manufacturer filter.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchQuery('');
+              setManufacturerFilter('all');
+            }}
+            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm"
+          >
+            Clear search and filters
           </button>
         </div>
       ) : (
@@ -274,7 +358,7 @@ const VaccinesPage = () => {
         <div className="mt-2">
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(vaccines.length / itemsPerPage)}
+            totalPages={Math.ceil(filteredVaccines.length / itemsPerPage)}
             onPageChange={setCurrentPage}
           />
         </div>
