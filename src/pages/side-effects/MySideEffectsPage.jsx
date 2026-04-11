@@ -26,12 +26,24 @@ const MySideEffectsPage = () => {
       setLoading(true);
       try {
         const reportsData = await getMySideEffects();
-        setReports(Array.isArray(reportsData) ? reportsData : reportsData?.data || []);
+        // Backend returns { success, count, data: [...] }
+        const reportsArray = Array.isArray(reportsData)
+          ? reportsData
+          : Array.isArray(reportsData?.data)
+          ? reportsData.data
+          : [];
+        setReports(reportsArray);
         
         // Fetch vaccination records for the dropdown
         setLoadingRecords(true);
         const recordsData = await getMyRecords();
-        setMyRecords(Array.isArray(recordsData) ? recordsData : recordsData?.data || []);
+        // Backend returns { success, count, data: [...] }
+        const recordsArray = Array.isArray(recordsData)
+          ? recordsData
+          : Array.isArray(recordsData?.data)
+          ? recordsData.data
+          : [];
+        setMyRecords(recordsArray);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load side-effect reports.');
       } finally {
@@ -67,7 +79,9 @@ const MySideEffectsPage = () => {
       const newReportResponse = await reportSideEffect(payload);
       
       // Prepend the new report to the list
-      setReports((prev) => [newReportResponse, ...prev]);
+      // Backend returns { success, message, data: { sideEffect } }
+      const newReport = newReportResponse?.data ?? newReportResponse;
+      setReports((prev) => [newReport, ...prev]);
       
       setSubmitSuccess(true);
       reset();
@@ -176,7 +190,7 @@ const MySideEffectsPage = () => {
         <div className="lg:col-span-2">
           <Card className="h-full">
             <CardHeader>
-              <CardTitle>My Previous Reports</CardTitle>
+              <CardTitle>Previous Reports</CardTitle>
             </CardHeader>
             <CardBody>
               {loading ? (

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/useAuthStore';
 import {
@@ -10,6 +10,7 @@ import {
   deleteRecord,
   getDueRecords,
 } from '../../api/recordApi';
+import { searchPatients } from '../../api/authApi';
 import { vaccineApi } from '../../api/vaccineApi';
 import { batchApi } from '../../api/batchApi';
 import { hospitalApi } from '../../api/hospitalApi';
@@ -80,6 +81,17 @@ const toInputDate = (dateStr) => {
   }
 };
 
+// ─── Helper: Check if a dependentName is a real value ────────────────────────
+// Guards against null, empty string, whitespace, and the literal placeholder
+// value "string" that gets stored when Swagger/Postman tests send the default.
+const isValidDependent = (name) => {
+  if (!name) return false;
+  const trimmed = String(name).trim();
+  if (!trimmed) return false;
+  if (trimmed.toLowerCase() === 'string') return false;
+  return true;
+};
+
 // ─── Detail Field Component ─────────────────────────────────────────────────
 const DetailField = ({ label, value }) => (
   <div>
@@ -108,8 +120,7 @@ const RecordsPage = () => {
   const [activeTab, setActiveTab] = useState('records');
 
   // ── Due vaccinations (Public users) ────────────────────────────────────
-  const [dueData, setDueData] = useState({ upcoming: [], overdue: [] });
-  const [dueLoading, setDueLoading] = useState(false);
+  // Due data is computed dynamically on the frontend via useMemo
 
   // ── Filters (Staff/Admin) ──────────────────────────────────────────────
   const [filters, setFilters] = useState({
@@ -229,31 +240,9 @@ const RecordsPage = () => {
     }
   }, [isStaffOrAdmin, filters]);
 
-  const fetchDueRecords = useCallback(async () => {
-    setDueLoading(true);
-    try {
-      const res = await getDueRecords();
-      const data = res?.data || res;
-      setDueData({
-        upcoming: data?.upcoming?.records || [],
-        overdue: data?.overdue?.records || [],
-      });
-    } catch {
-      toast.error('Failed to load due vaccinations.');
-    } finally {
-      setDueLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     fetchRecords();
   }, [fetchRecords]);
-
-  useEffect(() => {
-    if (activeTab === 'due' && !isStaffOrAdmin) {
-      fetchDueRecords();
-    }
-  }, [activeTab, isStaffOrAdmin, fetchDueRecords]);
 
   // ═════════════════════════════════════════════════════════════════════════
   // PATIENT SEARCH / VALIDATION (debounced)
@@ -274,38 +263,22 @@ const RecordsPage = () => {
       setPatientMatch(null);
 
       try {
-        // Use the existing getAllRecords filter — it resolves NIC/name/ID
-        // to actual users on the backend, and returns populated patientId
-        const res = await getAllRecords({ patientId: patientInput.trim() });
-        const data = res?.data || res || [];
-        const recordList = Array.isArray(data) ? data : [];
+        // Directly search the User collection by NIC, name, or ObjectId.
+        // This works even for brand-new patients who have no vaccination records yet.
+        const res = await searchPatients(patientInput.trim());
+        const users = res?.data?.data || res?.data || [];
+        const userList = Array.isArray(users) ? users : [];
 
-        if (recordList.length > 0) {
-          // Extract the first unique patient from results
-          const patient = recordList[0]?.patientId;
-          if (patient && typeof patient === 'object' && patient._id) {
-            setPatientMatch({ _id: patient._id, name: patient.name, nic: patient.nic });
-            setCreateForm((prev) => ({ ...prev, patientId: patient._id }));
-          } else {
-            setPatientError('Patient found in records but could not resolve details.');
-          }
+        if (userList.length > 0) {
+          const patient = userList[0];
+          setPatientMatch({ _id: patient._id, name: patient.name, nic: patient.nic });
+          setCreateForm((prev) => ({ ...prev, patientId: patient._id }));
         } else {
-          // No records found — but the patient might still exist (just has no records yet).
-          // The backend's createRecord does User.findById, so a valid ObjectId still works.
-          // Check if input looks like a valid 24-char hex ObjectId
-          const isObjectId = /^[a-fA-F0-9]{24}$/.test(patientInput.trim());
-          if (isObjectId) {
-            // Trust it — set as patientId, backend will validate existence
-            setCreateForm((prev) => ({ ...prev, patientId: patientInput.trim() }));
-            setPatientMatch(null);
-            setPatientError('');
-          } else {
-            setPatientError('No patient found with this NIC or ID. Please check and try again.');
-            setCreateForm((prev) => ({ ...prev, patientId: '' }));
-          }
+          setPatientError('No patient found with this NIC or name. Please check and try again.');
+          setCreateForm((prev) => ({ ...prev, patientId: '' }));
         }
       } catch {
-        // If error, still allow raw ObjectId
+        // Fallback: if the API fails, still allow a raw 24-char ObjectId
         const isObjectId = /^[a-fA-F0-9]{24}$/.test(patientInput.trim());
         if (isObjectId) {
           setCreateForm((prev) => ({ ...prev, patientId: patientInput.trim() }));
@@ -317,11 +290,12 @@ const RecordsPage = () => {
       } finally {
         setPatientSearching(false);
       }
-    }, 600); // 600ms debounce
+    }, 500); // 500 ms debounce
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientInput]);
+
 
   // ═════════════════════════════════════════════════════════════════════════
   // CASCADING DROPDOWNS: Vaccine → Batches → Hospitals (Create Modal)
@@ -548,7 +522,7 @@ const RecordsPage = () => {
     return String(field);
   };
 
-  const getNextDoseInfo = (record) => {
+  const getNextDoseInfo = useCallback((record) => {
     // vaccineId is now populated as an object with { _id, name, dosesRequired, daysBetweenDoses }
     const vaccine = typeof record.vaccineId === 'object' ? record.vaccineId : null;
     if (!vaccine || vaccine.dosesRequired == null || vaccine.daysBetweenDoses == null) {
@@ -598,7 +572,59 @@ const RecordsPage = () => {
     }
 
     return { type: 'unknown' };
-  };
+  }, [records, isStaffOrAdmin]);
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // COMPUTE DUE VACCINATIONS
+  // ═════════════════════════════════════════════════════════════════════════
+  const derivedDueData = useMemo(() => {
+    if (isStaffOrAdmin || activeTab !== 'due') return { upcoming: [], overdue: [] };
+
+    const groups = new Map();
+    
+    // Group records by dependent + vaccine
+    records.forEach((r) => {
+      const dep = isValidDependent(r.dependentName) ? r.dependentName : 'Self';
+      const vId = extractId(r.vaccineId);
+      if (!vId) return;
+      
+      const key = `${dep}_${vId}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(r);
+    });
+
+    const upcoming = [];
+    const overdue = [];
+
+    // For each unique vaccine course, get the latest shot
+    groups.forEach((groupRecords) => {
+      // Sort to find the latest administered record
+      const sorted = [...groupRecords].sort(
+        (a, b) => new Date(b.dateAdministered) - new Date(a.dateAdministered)
+      );
+      const latestRecord = sorted[0];
+
+      // What is the status of this course according to the frontend logic?
+      const info = getNextDoseInfo(latestRecord);
+      
+      if (info.type === 'due') {
+        const enrichedRecord = { ...latestRecord, nextDoseDate: info.date };
+        if (info.isOverdue) {
+          overdue.push(enrichedRecord);
+        } else {
+          upcoming.push(enrichedRecord);
+        }
+      }
+    });
+
+    // Sort both arrays by next dose date ascending (closest first)
+    const sortByDate = (a, b) => new Date(a.nextDoseDate) - new Date(b.nextDoseDate);
+    
+    return {
+      upcoming: upcoming.sort(sortByDate),
+      overdue: overdue.sort(sortByDate)
+    };
+  }, [records, isStaffOrAdmin, activeTab, getNextDoseInfo]);
 
   // ═════════════════════════════════════════════════════════════════════════
   // BUILD SELECT OPTIONS
@@ -760,16 +786,10 @@ const RecordsPage = () => {
 
       {/* ── Due Vaccinations Tab Content ─────────────────────────────────── */}
       {!isStaffOrAdmin && activeTab === 'due' && (
-        dueLoading ? (
-          <div className="py-12 flex justify-center">
-            <Spinner size="lg" />
-          </div>
-        ) : (
-          <div>
-            {renderDueSection('Overdue Vaccinations', dueData.overdue, 'overdue')}
-            {renderDueSection('Upcoming Vaccinations', dueData.upcoming, 'upcoming')}
-          </div>
-        )
+        <div>
+          {renderDueSection('Overdue Vaccinations', derivedDueData.overdue, 'overdue')}
+          {renderDueSection('Upcoming Vaccinations', derivedDueData.upcoming, 'upcoming')}
+        </div>
       )}
 
       {/* ── Records Tab Content (shared for Staff and Public-"records" tab) */}
@@ -872,7 +892,9 @@ const RecordsPage = () => {
                           </td>
                         )}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
-                          {record.dependentName && record.dependentName.trim() ? record.dependentName : <span className="text-slate-400 italic">Self</span>}
+                          {isValidDependent(record.dependentName)
+                            ? record.dependentName
+                            : <span className="text-slate-400 italic">Self</span>}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
                           {vaccineDisplay(record.vaccineId)}
@@ -984,7 +1006,7 @@ const RecordsPage = () => {
                   : detailRecord.patientId
               }
             />
-            <DetailField label="Dependent" value={detailRecord.dependentName || 'Self'} />
+            <DetailField label="Dependent" value={isValidDependent(detailRecord.dependentName) ? detailRecord.dependentName : 'Self'} />
             <DetailField label="Vaccine" value={vaccineDisplay(detailRecord.vaccineId)} />
             <DetailField
               label="Batch ID"
