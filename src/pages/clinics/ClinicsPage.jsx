@@ -9,7 +9,8 @@ import {
   ConfirmDialog,
   StatusBadge,
   EmptyState,
-  Spinner
+  Spinner,
+  Pagination
 } from '../../components/common';
 import { FiPlus, FiEdit2, FiTrash2, FiCalendar, FiClock, FiActivity, FiUsers } from 'react-icons/fi';
 import clinicApi from '../../api/clinicApi';
@@ -23,6 +24,10 @@ const ClinicsPage = () => {
   const [searchDate, setSearchDate] = useState('');
   const [filterHospital, setFilterHospital] = useState('');
   const [filterVaccine, setFilterVaccine] = useState('');
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
   
   // Modals
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -91,6 +96,16 @@ const ClinicsPage = () => {
       return matchDate && matchHospital && matchVaccine;
     });
   }, [clinics, searchDate, filterHospital, filterVaccine]);
+
+  // Reset to first page when filtering
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchDate, filterHospital, filterVaccine]);
+
+  const paginatedClinics = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredClinics.slice(start, start + itemsPerPage);
+  }, [filteredClinics, currentPage, itemsPerPage]);
 
   const handleOpenForm = (clinic = null) => {
     if (clinic) {
@@ -214,8 +229,9 @@ const ClinicsPage = () => {
           <p className="mt-4 text-slate-500 animate-pulse">Loading clinics...</p>
         </div>
       ) : filteredClinics.length > 0 ? (
+        <>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredClinics.map(clinic => {
+          {paginatedClinics.map(clinic => {
             const isFull = clinic.bookedCount >= clinic.capacity;
             const utilization = Math.min(Math.round((clinic.bookedCount / clinic.capacity) * 100), 100);
             
@@ -288,6 +304,12 @@ const ClinicsPage = () => {
             )
           })}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredClinics.length / itemsPerPage)}
+          onPageChange={setCurrentPage}
+        />
+      </>
       ) : (
         <EmptyState 
           icon={FiCalendar}

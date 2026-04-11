@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiLayers, FiInfo, FiClock, FiImage, FiGrid, FiList } from 'react-icons/fi';
 import vaccineApi from '../../api/vaccineApi';
+import { Pagination } from '../../components/common';
 
 const VaccinesPage = () => {
   const [vaccines, setVaccines] = useState([]);
@@ -10,6 +11,19 @@ const VaccinesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = viewMode === 'grid' ? 8 : 6;
+
+  const paginatedVaccines = React.useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return vaccines.slice(start, start + itemsPerPage);
+  }, [vaccines, currentPage, itemsPerPage]);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [viewMode]);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   
@@ -159,10 +173,12 @@ const VaccinesPage = () => {
             + Add to catalog
           </button>
         </div>
-      ) : viewMode === 'grid' ? (
+      ) : (
+        <>
+        {viewMode === 'grid' ? (
         /* GRID VIEW */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {vaccines.map((vax) => (
+          {paginatedVaccines.map((vax) => (
             <div key={vax._id || vax.id} className="bg-card rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-medium transition-shadow group flex flex-col">
               <div className="h-48 bg-secondary-100 dark:bg-slate-800 relative overflow-hidden">
                 {vax.imageUrl ? (
@@ -215,7 +231,7 @@ const VaccinesPage = () => {
               </tr>
             </thead>
             <tbody className="bg-card divide-y divide-border">
-              {vaccines.map((vax) => (
+              {paginatedVaccines.map((vax) => (
                 <tr key={vax._id || vax.id} className="hover:bg-secondary-50 dark:hover:bg-slate-800/50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -253,6 +269,16 @@ const VaccinesPage = () => {
             </tbody>
           </table>
         </div>
+      )}
+      
+        <div className="mt-2">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(vaccines.length / itemsPerPage)}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      </>
       )}
 
       {/* Modal Setup for ADD / EDIT */}

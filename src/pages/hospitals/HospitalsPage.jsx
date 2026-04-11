@@ -11,7 +11,8 @@ import {
   ConfirmDialog,
   StatusBadge,
   EmptyState,
-  Spinner
+  Spinner,
+  Pagination
 } from '../../components/common';
 import { FiPlus, FiEdit2, FiTrash2, FiMapPin, FiSearch, FiFilter, FiNavigation } from 'react-icons/fi';
 import hospitalApi from '../../api/hospitalApi';
@@ -37,6 +38,10 @@ const HospitalsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCity, setFilterCity] = useState('');
   const [filterDistrict, setFilterDistrict] = useState('');
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Modals State
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -81,6 +86,17 @@ const HospitalsPage = () => {
       return matchSearch && matchCity && matchDistrict;
     });
   }, [hospitals, searchQuery, filterCity, filterDistrict]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterCity, filterDistrict]);
+
+  // Paginate list
+  const paginatedHospitals = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredHospitals.slice(start, start + itemsPerPage);
+  }, [filteredHospitals, currentPage, itemsPerPage]);
 
   // Handlers
   const handleOpenForm = (hospital = null) => {
@@ -225,8 +241,9 @@ const HospitalsPage = () => {
           <p className="mt-4 text-slate-500 animate-pulse">Loading hospitals...</p>
         </div>
       ) : filteredHospitals.length > 0 ? (
+        <>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredHospitals.map(hospital => (
+          {paginatedHospitals.map(hospital => (
             <Card key={hospital._id} className="hover:shadow-medium transition-shadow duration-200">
               <CardBody className="flex flex-col h-full">
                 <div className="flex justify-between items-start mb-4">
@@ -275,6 +292,12 @@ const HospitalsPage = () => {
             </Card>
           ))}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredHospitals.length / itemsPerPage)}
+          onPageChange={setCurrentPage}
+        />
+      </>
       ) : (
         <EmptyState
           icon={FiMapPin}
