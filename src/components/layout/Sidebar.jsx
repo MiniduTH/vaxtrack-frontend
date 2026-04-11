@@ -12,6 +12,7 @@ import {
   FiAlertCircle,
   FiFileText,
   FiAlertTriangle,
+  FiZap,
 } from 'react-icons/fi';
 
 // ─── Nav config per role ──────────────────────────────────────────────────────
@@ -31,8 +32,9 @@ const getNavLinks = (role) => {
       { name: 'Batches',          path: '/dashboard/batches',      icon: FiList       },
       { name: 'Inventory Alerts', path: '/dashboard/inventory',    icon: FiAlertCircle},
       { name: 'All Appointments', path: '/dashboard/appointments', icon: FiUsers      },
-      { name: 'All Records',      path: '/dashboard/records',      icon: FiFileText   },
+      { name: 'All Records',      path: '/dashboard/records',      icon: FiFileText      },
       { name: 'Side Effects',     path: '/dashboard/side-effects', icon: FiAlertTriangle },
+      { name: 'Scan QR',          path: '/dashboard/scan',         icon: FiZap           },
     ];
   }
 
@@ -42,8 +44,9 @@ const getNavLinks = (role) => {
       { name: 'Queue Board',      path: '/dashboard/queue',        icon: FiList       },
       { name: 'Clinics',          path: '/dashboard/clinics',      icon: FiCalendar   },
       { name: 'Batches',          path: '/dashboard/batches',      icon: FiPackage    },
-      { name: 'All Records',      path: '/dashboard/records',      icon: FiFileText   },
+      { name: 'All Records',      path: '/dashboard/records',      icon: FiFileText      },
       { name: 'Side Effects',     path: '/dashboard/side-effects', icon: FiAlertTriangle },
+      { name: 'Scan QR',          path: '/dashboard/scan',         icon: FiZap           },
     ];
   }
 

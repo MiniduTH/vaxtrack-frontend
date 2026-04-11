@@ -12,6 +12,7 @@ import {
   AppointmentsPage,
   BookAppointmentPage,
   QueueBoardPage,
+  QRScannerPage,
 
   // Nethmi — Hospitals & Clinics
   HospitalsPage,
@@ -92,6 +93,16 @@ function App() {
             element={
               <RoleRoute roles={['HospitalStaff', 'Admin']}>
                 <QueueBoardPage />
+              </RoleRoute>
+            }
+          />
+
+          {/* QR Scanner: Staff/Admin only */}
+          <Route
+            path="scan"
+            element={
+              <RoleRoute roles={['HospitalStaff', 'Admin']}>
+                <QRScannerPage />
               </RoleRoute>
             }
           />

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
-  FiCalendar, FiPlus, FiRefreshCw, FiClock, FiMapPin, FiHash
+  FiCalendar, FiPlus, FiRefreshCw, FiClock, FiMapPin, FiHash, FiX, FiMaximize2
 } from 'react-icons/fi';
 import {
   Button, StatusBadge, Spinner, EmptyState, Modal, SearchBar
@@ -22,7 +22,7 @@ const STATUS_COLOR = {
   'No-Show': 'danger',
 };
 
-const AppointmentCard = ({ appt, onCancel }) => {
+const AppointmentCard = ({ appt, onCancel, onViewQR }) => {
   const clinic  = appt.clinicId || {};
   const patient = appt.dependentId
     ? `Dependent — ${appt.dependentId.name}`
@@ -68,17 +68,26 @@ const AppointmentCard = ({ appt, onCancel }) => {
       {/* QR Code */}
       {appt.qrCodeUrl && (
         <div className="mb-4 flex items-center gap-3 p-3 bg-secondary-50 dark:bg-slate-800/50 rounded-xl">
-          <img
-            src={appt.qrCodeUrl}
-            alt="QR Code"
-            className="w-16 h-16 rounded-lg border border-border object-contain"
-          />
+          <button
+            onClick={() => onViewQR(appt)}
+            className="relative group shrink-0 rounded-lg border border-border overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary-500"
+            title="Click to enlarge"
+          >
+            <img
+              src={appt.qrCodeUrl}
+              alt="QR Code"
+              className="w-16 h-16 object-contain"
+            />
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <FiMaximize2 className="w-5 h-5 text-white" />
+            </div>
+          </button>
           <div>
             <p className="text-xs font-medium text-secondary-500 dark:text-slate-400 uppercase tracking-wide mb-0.5">
               Appointment QR
             </p>
             <p className="text-xs text-secondary-400 dark:text-slate-500">
-              Show this at the clinic
+              Tap to enlarge · Show at clinic
             </p>
           </div>
         </div>
@@ -121,8 +130,9 @@ const AppointmentsPage = () => {
   const [loading, setLoading]           = useState(true);
   const [activeTab, setActiveTab]       = useState('All');
   const [search, setSearch]             = useState('');
-  const [cancelTarget, setCancelTarget] = useState(null); // appt object to cancel
+  const [cancelTarget, setCancelTarget] = useState(null);
   const [cancelling, setCancelling]     = useState(false);
+  const [qrTarget, setQrTarget]         = useState(null); // appt to show in QR modal
 
   // ── Fetch ──
   const fetchAppointments = useCallback(async () => {
@@ -250,8 +260,52 @@ const AppointmentsPage = () => {
               key={appt._id}
               appt={appt}
               onCancel={setCancelTarget}
+              onViewQR={setQrTarget}
             />
           ))}
+        </div>
+      )}
+
+      {/* QR lightbox modal */}
+      {qrTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          onClick={() => setQrTarget(null)}
+        >
+          <div
+            className="bg-card rounded-2xl shadow-xl p-6 max-w-sm w-full flex flex-col items-center gap-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setQrTarget(null)}
+              className="absolute top-3 right-3 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-label="Close"
+            >
+              <FiX className="w-5 h-5" />
+            </button>
+
+            <div>
+              <h3 className="text-lg font-bold text-foreground text-center">
+                {qrTarget.clinicId?.vaccineType ?? 'Appointment'} QR
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 text-center mt-0.5">
+                Queue #{qrTarget.queueNumber} · Show this at the clinic
+              </p>
+            </div>
+
+            <div className="p-3 bg-white rounded-xl border border-border shadow-soft">
+              <img
+                src={qrTarget.qrCodeUrl}
+                alt="Appointment QR Code"
+                className="w-56 h-56 object-contain"
+              />
+            </div>
+
+            <div className="text-xs text-slate-400 dark:text-slate-500 text-center">
+              {qrTarget.clinicId?.date ? formatDate(qrTarget.clinicId.date) : ''}
+              {qrTarget.clinicId?.startTime ? ` · ${qrTarget.clinicId.startTime} – ${qrTarget.clinicId.endTime}` : ''}
+            </div>
+          </div>
         </div>
       )}
 
@@ -289,6 +343,7 @@ const AppointmentsPage = () => {
           ? This action cannot be undone.
         </p>
       </Modal>
+
     </div>
   );
 };

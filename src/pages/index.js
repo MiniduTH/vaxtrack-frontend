@@ -3,6 +3,7 @@ export { default as DashboardPage }        from './dashboard/DashboardPage';
 export { default as AppointmentsPage }     from './appointments/AppointmentsPage';
 export { default as BookAppointmentPage }  from './appointments/BookAppointmentPage';
 export { default as QueueBoardPage }       from './appointments/QueueBoardPage';
+export { default as QRScannerPage }        from './staff/QRScannerPage';
 
 // ── Nethmi ──────────────────────────────────────────────────────────────────
 export { default as HospitalsPage }        from './hospitals/HospitalsPage';
