@@ -10,7 +10,24 @@ const DependentsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm();
+  
+  const watchRelationship = watch('relationship');
+  const watchDOB = watch('dateOfBirth');
+
+  const calculateAge = (dob) => {
+    if (!dob) return 0;
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const isNicRequired = watchRelationship === 'Spouse' || watchRelationship === 'Parent' || calculateAge(watchDOB) >= 18;
 
   const fetchDependents = async () => {
     try {
@@ -247,14 +264,23 @@ const DependentsPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">NIC </label>
+                <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">
+                  NIC {isNicRequired && '*'}
+                </label>
                 <input
                   type="text"
-                  {...register('nic')}
-                  className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 transition-all outline-none"
-                  placeholder="Only if applicable"
+                  {...register('nic', { 
+                    required: isNicRequired ? 'NIC is required for this category' : false,
+                    pattern: {
+                      value: /^([0-9]{9}[x|X|v|V]|[0-9]{12})$/,
+                      message: 'Invalid NIC format'
+                    }
+                  })}
+                  className={`w-full p-2.5 bg-card text-foreground border rounded-lg focus:ring-2 focus:ring-primary-500 transition-all outline-none ${errors.nic ? 'border-danger-500' : 'border-border'}`}
+                  placeholder={isNicRequired ? "NIC Number required" : "Only if applicable"}
                 />
-                <p className="text-secondary-400 text-xs mt-1">Leave blank if dependent is a minor without an NIC.</p>
+                {errors.nic && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.nic.message}</p>}
+                {!isNicRequired && <p className="text-secondary-400 text-xs mt-1">Leave blank if dependent is a minor without an NIC.</p>}
               </div>
 
               <div className="mt-8 pt-4 border-t border-gray-100 flex justify-end space-x-3">
