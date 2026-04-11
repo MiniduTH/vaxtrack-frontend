@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { FiUser, FiMail, FiLock, FiPhone, FiMapPin, FiCreditCard, FiShield } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiPhone, FiMapPin, FiCreditCard } from 'react-icons/fi';
 import useAuthStore from '../../store/useAuthStore';
 import { registerUser } from '../../api/authApi';
 
@@ -15,7 +15,7 @@ const RegisterPage = () => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const res = await registerUser(data);
+      const res = await registerUser({ ...data, role: 'Public' });
       // Backend returns { _id, name, email, role, token } directly
       const { token, ...user } = res.data;
       setLogin(user, token);
@@ -125,26 +125,6 @@ const RegisterPage = () => {
                 />
               </div>
               {errors.nic && <p className="mt-1 text-sm text-danger-600 dark:text-danger-400 font-medium">{errors.nic.message}</p>}
-            </div>
-
-            {/* Role Selection */}
-            <div className="md:col-span-2">
-              <label htmlFor="role" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Account Role</label>
-              <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiShield className="text-secondary-400 dark:text-slate-500" />
-                </div>
-                <select
-                  id="role"
-                  className="pl-10 block w-full sm:text-sm bg-card text-foreground border-border rounded-md focus:ring-primary-500 focus:border-primary-500 p-2.5 border outline-none transition-shadow"
-                  {...register('role', { required: 'Role is required' })}
-                  defaultValue="Public"
-                >
-                  <option value="Public">Public (Patient)</option>
-                  <option value="HospitalStaff">Hospital Staff</option>
-                  <option value="Admin">System Admin</option>
-                </select>
-              </div>
             </div>
 
             {/* Phone */}

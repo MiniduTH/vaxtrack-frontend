@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   FiCalendar, FiPlus, FiRefreshCw, FiClock, FiMapPin, FiHash
@@ -168,6 +168,36 @@ const AppointmentsPage = () => {
 
   return (
     <div className="space-y-6">
+
+      {/* Appointment sub-tab nav */}
+      <div className="flex gap-1 border-b border-border">
+        <NavLink
+          to="/dashboard/appointments"
+          end
+          className={({ isActive }) =>
+            `px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+              isActive
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-slate-500 hover:text-foreground dark:text-slate-400'
+            }`
+          }
+        >
+          My Appointments
+        </NavLink>
+        <NavLink
+          to="/dashboard/appointments/book"
+          className={({ isActive }) =>
+            `px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+              isActive
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-slate-500 hover:text-foreground dark:text-slate-400'
+            }`
+          }
+        >
+          Book Appointment
+        </NavLink>
+      </div>
+
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -180,18 +210,11 @@ const AppointmentsPage = () => {
           <Button variant="ghost" size="sm" onClick={fetchAppointments} icon={FiRefreshCw}>
             Refresh
           </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            icon={FiPlus}
-            as={Link}
-            onClick={() => {}}
-          >
-            <Link to="/dashboard/appointments/book" className="flex items-center gap-1">
-              <FiPlus className="w-4 h-4" />
+          <Link to="/dashboard/appointments/book">
+            <Button variant="primary" size="sm" icon={FiPlus}>
               Book Appointment
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
 
