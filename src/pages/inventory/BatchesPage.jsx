@@ -34,9 +34,9 @@ const BatchesPage = () => {
           batchApi.getBatches()
         ]);
         
-        setVaccines(Array.isArray(vaxData) ? vaxData : vaxData.vaccines || []);
-        setHospitals(Array.isArray(hospData) ? hospData : hospData.hospitals || []);
-        setBatches(Array.isArray(batchData) ? batchData : batchData.batches || []);
+        setVaccines(Array.isArray(vaxData) ? vaxData : vaxData.data || vaxData.vaccines || []);
+        setHospitals(Array.isArray(hospData) ? hospData : hospData.data || hospData.hospitals || []);
+        setBatches(Array.isArray(batchData) ? batchData : batchData.data || batchData.batches || []);
       } catch (error) {
         toast.error('Failed to load inventory data');
       } finally {
@@ -106,7 +106,7 @@ const BatchesPage = () => {
       
       // Reload batches
       const response = await batchApi.getBatches();
-      setBatches(Array.isArray(response) ? response : response.batches || []);
+      setBatches(Array.isArray(response) ? response : response.data || response.batches || []);
     } catch (error) {
       toast.error('Failed to save batch details');
     }
@@ -118,7 +118,7 @@ const BatchesPage = () => {
       await batchApi.deleteBatch(id);
       toast.success('Batch deleted');
       const response = await batchApi.getBatches();
-      setBatches(Array.isArray(response) ? response : response.batches || []);
+      setBatches(Array.isArray(response) ? response : response.data || response.batches || []);
     } catch (error) {
       toast.error('Failed to delete batch');
     }
@@ -127,13 +127,13 @@ const BatchesPage = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'Available':
-        return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800 flex items-center w-fit"><FiCheckCircle className="mr-1" /> Available</span>;
+        return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-success-50 dark:bg-success-500/10 text-success-800 dark:text-success-400 flex items-center w-fit"><FiCheckCircle className="mr-1" /> Available</span>;
       case 'Expired':
-        return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800 flex items-center w-fit"><FiXCircle className="mr-1" /> Expired</span>;
+        return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-danger-50 dark:bg-danger-500/10 text-danger-800 dark:text-danger-400 flex items-center w-fit"><FiXCircle className="mr-1" /> Expired</span>;
       case 'Depleted':
-        return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800 flex items-center w-fit"><FiAlertTriangle className="mr-1" /> Depleted</span>;
+        return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-secondary-100 dark:bg-slate-800 text-secondary-800 dark:text-slate-200 flex items-center w-fit"><FiAlertTriangle className="mr-1" /> Depleted</span>;
       default:
-        return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800">{status}</span>;
+        return <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200">{status}</span>;
     }
   };
 
@@ -156,28 +156,28 @@ const BatchesPage = () => {
     <div className="p-6 sm:p-10 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <FiBox className="mr-3 text-blue-600" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center">
+            <FiBox className="mr-3 text-primary-600 dark:text-primary-400" />
             Batch Inventory
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Manage stock, track expiry dates, and monitor hospital capacities.</p>
+          <p className="text-secondary-500 dark:text-slate-400 text-sm mt-1">Manage stock, track expiry dates, and monitor hospital capacities.</p>
         </div>
         <button
           onClick={openAddModal}
-          className="flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-sm font-medium"
+          className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-400 transition shadow-sm font-medium"
         >
           <FiPlus className="mr-2" /> Add New Batch
         </button>
       </div>
 
       {/* FILTER BAR */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-col sm:flex-row gap-4 items-center">
-        <div className="flex items-center text-gray-500 pr-2 border-r border-gray-200">
+      <div className="bg-card p-4 rounded-xl shadow-sm border border-border mb-6 flex flex-col sm:flex-row gap-4 items-center">
+        <div className="flex items-center text-secondary-500 dark:text-slate-400 pr-2 border-r border-border">
           <FiFilter className="mr-2" /> <span className="text-sm font-medium">Filters</span>
         </div>
         
         <select 
-          className="w-full sm:w-auto p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-auto p-2 bg-secondary-50 dark:bg-slate-800/50 border border-border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
         >
@@ -188,7 +188,7 @@ const BatchesPage = () => {
         </select>
 
         <select 
-          className="w-full sm:w-auto p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-auto p-2 bg-secondary-50 dark:bg-slate-800/50 border border-border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
           value={filterVaccine}
           onChange={(e) => setFilterVaccine(e.target.value)}
         >
@@ -199,7 +199,7 @@ const BatchesPage = () => {
         </select>
 
         <select 
-          className="w-full sm:w-auto p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-auto p-2 bg-secondary-50 dark:bg-slate-800/50 border border-border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
           value={filterHospital}
           onChange={(e) => setFilterHospital(e.target.value)}
         >
@@ -212,7 +212,7 @@ const BatchesPage = () => {
         {(filterStatus || filterHospital || filterVaccine) && (
           <button 
             onClick={() => { setFilterStatus(''); setFilterVaccine(''); setFilterHospital(''); }}
-            className="text-sm text-blue-600 hover:text-blue-800 ml-auto flex items-center"
+            className="text-sm text-primary-600 dark:text-primary-400 hover:text-blue-800 ml-auto flex items-center"
           >
             Clear filters
           </button>
@@ -221,58 +221,58 @@ const BatchesPage = () => {
 
       {isLoading ? (
         <div className="flex justify-center p-12">
-          <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-8 w-8 text-primary-600 dark:text-primary-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
         </div>
       ) : filteredBatches.length === 0 ? (
-        <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center text-gray-500">
-          <FiSearch className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-1">No batches found</h3>
+        <div className="bg-card rounded-xl border border-dashed border-border p-12 text-center text-secondary-500 dark:text-slate-400">
+          <FiSearch className="mx-auto h-12 w-12 text-secondary-400 dark:text-slate-500 mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-1">No batches found</h3>
           <p className="mb-4 text-sm">No inventory records match your current criteria.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-border">
+              <thead className="bg-secondary-50 dark:bg-slate-800/50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Batch No.</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Vaccine</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Hospital</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status & Quantity</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Dates</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Batch No.</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Vaccine</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Hospital</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Status & Quantity</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Dates</th>
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-card divide-y divide-border">
                 {filteredBatches.map((batch) => (
-                  <tr key={batch._id || batch.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 font-mono">
+                  <tr key={batch._id || batch.id} className="hover:bg-secondary-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-foreground font-mono">
                       #{batch.batchNumber}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-700 dark:text-slate-300">
                       {getVaccineName(batch.vaccineId)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-600 dark:text-slate-400">
                       {getHospitalName(batch.hospitalId)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(batch.status)}
-                      <div className="mt-1.5 text-sm font-medium text-gray-600">
+                      <div className="mt-1.5 text-sm font-medium text-secondary-600 dark:text-slate-400">
                         {batch.quantity.toLocaleString()} units
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-secondary-500 dark:text-slate-400">
                       <div className="mb-1"><span className="font-semibold">Arr:</span> {new Date(batch.arrivalDate).toLocaleDateString()}</div>
-                      <div><span className="font-semibold text-red-400">Exp:</span> {new Date(batch.expiryDate).toLocaleDateString()}</div>
+                      <div><span className="font-semibold text-danger-400">Exp:</span> {new Date(batch.expiryDate).toLocaleDateString()}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <button onClick={() => openEditModal(batch)} className="text-indigo-600 hover:text-indigo-900 mx-3 p-1">
+                      <button onClick={() => openEditModal(batch)} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mx-3 p-1">
                         <FiEdit2 size={16} />
                       </button>
-                      <button onClick={() => handleDelete(batch._id || batch.id)} className="text-red-500 hover:text-red-700 p-1">
+                      <button onClick={() => handleDelete(batch._id || batch.id)} className="text-danger-500 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 p-1">
                         <FiTrash2 size={16} />
                       </button>
                     </td>
@@ -286,14 +286,14 @@ const BatchesPage = () => {
 
       {/* MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50">
-              <h3 className="text-lg font-bold text-gray-900 flex items-center">
-                <FiBox className="mr-2 text-blue-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900 dark:bg-slate-950 bg-opacity-50 backdrop-blur-sm">
+          <div className="bg-card rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="flex justify-between items-center p-6 border-b border-border bg-secondary-50 dark:bg-slate-800/50">
+              <h3 className="text-lg font-bold text-foreground flex items-center">
+                <FiBox className="mr-2 text-primary-600 dark:text-primary-400" />
                 {editingId ? 'Edit Batch Record' : 'Register New Batch'}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-red-500 transition-colors">
+              <button onClick={() => setIsModalOpen(false)} className="text-secondary-400 dark:text-slate-500 hover:text-danger-500 dark:hover:text-danger-400 transition-colors">
                 <FiX size={24} />
               </button>
             </div>
@@ -302,21 +302,21 @@ const BatchesPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Batch Number *</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Batch Number *</label>
                   <input
                     type="text"
                     {...register('batchNumber', { required: 'Batch number is required' })}
-                    className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono placeholder:text-secondary-400"
                     placeholder="e.g. BATCH-2026-X1"
                   />
-                  {errors.batchNumber && <p className="text-red-500 text-xs mt-1">{errors.batchNumber.message}</p>}
+                  {errors.batchNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.batchNumber.message}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Vaccine Type *</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Vaccine Type *</label>
                   <select
                     {...register('vaccineId', { required: 'Required' })}
-                    className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   >
                     <option value="">Select Vaccine...</option>
                     {vaccines.map(v => <option key={v._id || v.id} value={v._id || v.id}>{v.name}</option>)}
@@ -324,10 +324,10 @@ const BatchesPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Assigned Hospital *</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Assigned Hospital *</label>
                   <select
                     {...register('hospitalId', { required: 'Required' })}
-                    className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   >
                     <option value="">Select Hospital...</option>
                     {hospitals.map(h => <option key={h._id || h.id} value={h._id || h.id}>{h.name}</option>)}
@@ -335,21 +335,21 @@ const BatchesPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Quantity (Units) *</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Quantity (Units) *</label>
                   <input
                     type="number"
                     min="1"
                     {...register('quantity', { required: 'Required', min: 1 })}
-                    className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                     placeholder="e.g. 5000"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Status</label>
                   <select
                     {...register('status', { required: true })}
-                    className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   >
                     <option value="Available">Available</option>
                     <option value="Depleted">Depleted</option>
@@ -358,35 +358,35 @@ const BatchesPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Arrival Date *</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Arrival Date *</label>
                   <input
                     type="date"
                     {...register('arrivalDate', { required: 'Required' })}
-                    className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date *</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Expiry Date *</label>
                   <input
                     type="date"
                     {...register('expiryDate', { required: 'Required' })}
-                    className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
               </div>
 
-              <div className="mt-8 pt-5 border-t border-gray-100 flex justify-end space-x-3">
+              <div className="mt-8 pt-5 border-t border-border flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition"
+                  className="px-5 py-2.5 rounded-lg text-secondary-700 dark:text-slate-300 font-medium hover:bg-secondary-100 dark:hover:bg-slate-800 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-sm transition"
+                  className="px-5 py-2.5 rounded-lg bg-primary-600 dark:bg-primary-500 text-white font-medium hover:bg-primary-700 dark:hover:bg-primary-400 shadow-sm transition"
                 >
                   {editingId ? 'Update Record' : 'Save Batch Info'}
                 </button>

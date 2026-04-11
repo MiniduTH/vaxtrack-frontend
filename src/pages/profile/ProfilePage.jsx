@@ -73,11 +73,11 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
         {/* Header Section */}
-        <div className="bg-blue-600 px-8 py-10 text-white flex flex-col sm:flex-row items-center justify-between">
+        <div className="bg-primary-600 dark:bg-primary-700 px-8 py-10 text-white flex flex-col sm:flex-row items-center justify-between">
           <div className="flex items-center space-x-5">
-            <div className="h-24 w-24 rounded-full bg-white text-blue-600 flex items-center justify-center text-3xl font-bold uppercase shadow-md">
+            <div className="h-24 w-24 rounded-full bg-white text-primary-600 flex items-center justify-center text-3xl font-bold uppercase shadow-md">
               {profileData.name ? profileData.name.charAt(0) : 'U'}
             </div>
             <div>
@@ -93,7 +93,7 @@ const ProfilePage = () => {
               setIsEditing(!isEditing);
               reset(profileData);
             }}
-            className="mt-6 sm:mt-0 flex items-center px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+            className="mt-6 sm:mt-0 flex items-center px-4 py-2 bg-white bg-opacity-20 hover:bg-white/30 rounded-lg transition-colors"
           >
             {isEditing ? (
               <>
@@ -114,29 +114,29 @@ const ProfilePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Full Name</label>
                   <input
                     type="text"
                     {...register('name', { required: 'Name is required' })}
-                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
                 {/* Phone */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Phone Number</label>
                   <input
                     type="text"
                     {...register('phone', { required: 'Phone is required' })}
-                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
                 {/* Address */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                  <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Address</label>
                   <textarea
                     {...register('address', { required: 'Address is required' })}
                     rows={3}
-                    className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
               </div>
@@ -145,7 +145,7 @@ const ProfilePage = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex items-center px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="flex items-center px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
                 >
                   <FiSave className="mr-2" /> {isLoading ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -154,35 +154,35 @@ const ProfilePage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Info Cards */}
-              <div className="flex items-start p-4 rounded-xl bg-gray-50">
-                <FiMail className="text-gray-400 text-xl mt-1 mr-4" />
+              <div className="flex items-start p-4 rounded-xl bg-secondary-50 dark:bg-slate-800/50">
+                <FiMail className="text-secondary-400 dark:text-slate-500 text-xl mt-1 mr-4" />
                 <div>
-                  <p className="text-sm text-gray-500 font-medium">Email Address</p>
-                  <p className="text-gray-900 font-medium mt-1">{profileData.email}</p>
+                  <p className="text-sm text-secondary-500 dark:text-slate-400 font-medium">Email Address</p>
+                  <p className="text-foreground font-medium mt-1">{profileData.email}</p>
                 </div>
               </div>
 
-              <div className="flex items-start p-4 rounded-xl bg-gray-50">
-                <FiPhone className="text-gray-400 text-xl mt-1 mr-4" />
+              <div className="flex items-start p-4 rounded-xl bg-secondary-50 dark:bg-slate-800/50">
+                <FiPhone className="text-secondary-400 dark:text-slate-500 text-xl mt-1 mr-4" />
                 <div>
-                  <p className="text-sm text-gray-500 font-medium">Phone Number</p>
-                  <p className="text-gray-900 font-medium mt-1">{profileData.phone || 'Not provided'}</p>
+                  <p className="text-sm text-secondary-500 dark:text-slate-400 font-medium">Phone Number</p>
+                  <p className="text-foreground font-medium mt-1">{profileData.phone || 'Not provided'}</p>
                 </div>
               </div>
 
-              <div className="flex items-start p-4 rounded-xl bg-gray-50">
-                <FiCreditCard className="text-gray-400 text-xl mt-1 mr-4" />
+              <div className="flex items-start p-4 rounded-xl bg-secondary-50 dark:bg-slate-800/50">
+                <FiCreditCard className="text-secondary-400 dark:text-slate-500 text-xl mt-1 mr-4" />
                 <div>
-                  <p className="text-sm text-gray-500 font-medium">National Identity Card (NIC)</p>
-                  <p className="text-gray-900 font-medium mt-1">{profileData.nic || 'Not provided'}</p>
+                  <p className="text-sm text-secondary-500 dark:text-slate-400 font-medium">National Identity Card (NIC)</p>
+                  <p className="text-foreground font-medium mt-1">{profileData.nic || 'Not provided'}</p>
                 </div>
               </div>
 
-              <div className="flex items-start p-4 rounded-xl bg-gray-50">
-                <FiMapPin className="text-gray-400 text-xl mt-1 mr-4" />
+              <div className="flex items-start p-4 rounded-xl bg-secondary-50 dark:bg-slate-800/50">
+                <FiMapPin className="text-secondary-400 dark:text-slate-500 text-xl mt-1 mr-4" />
                 <div>
-                  <p className="text-sm text-gray-500 font-medium">Physical Address</p>
-                  <p className="text-gray-900 mt-1 leading-relaxed">{profileData.address || 'Not provided'}</p>
+                  <p className="text-sm text-secondary-500 dark:text-slate-400 font-medium">Physical Address</p>
+                  <p className="text-foreground mt-1 leading-relaxed">{profileData.address || 'Not provided'}</p>
                 </div>
               </div>
             </div>

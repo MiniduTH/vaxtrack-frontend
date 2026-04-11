@@ -32,15 +32,15 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-card p-8 rounded-xl shadow-lg border border-border">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground tracking-tight">
             Sign in to VaxTrack
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-secondary-500 dark:text-slate-400">
             Or{' '}
-            <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+            <Link to="/register" className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors">
               create a new account
             </Link>
           </p>
@@ -48,16 +48,16 @@ const LoginPage = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+              <label htmlFor="email" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Email address</label>
               <div className="relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiMail className="text-gray-400" />
+                  <FiMail className="text-secondary-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="email"
                   type="email"
                   autoComplete="email"
-                  className={`pl-10 block w-full sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none transition-shadow ${errors.email ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''}`}
+                  className={`pl-10 block w-full sm:text-sm bg-card text-foreground border-border rounded-md focus:ring-primary-500 focus:border-primary-500 p-2.5 border outline-none transition-shadow ${errors.email ? 'border-danger-500 focus:ring-danger-500' : ''}`}
                   placeholder="you@example.com"
                   {...register('email', { 
                     required: 'Email is required',
@@ -68,20 +68,20 @@ const LoginPage = () => {
                   })}
                 />
               </div>
-              {errors.email && <p className="mt-1 text-sm text-red-600 font-medium">{errors.email.message}</p>}
+              {errors.email && <p className="mt-1 text-sm text-danger-500 dark:text-danger-400 font-medium">{errors.email.message}</p>}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Password</label>
               <div className="relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiLock className="text-gray-400" />
+                  <FiLock className="text-secondary-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="password"
                   type="password"
                   autoComplete="current-password"
-                  className={`pl-10 block w-full sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none transition-shadow ${errors.password ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''}`}
+                  className={`pl-10 block w-full sm:text-sm bg-card text-foreground border-border rounded-md focus:ring-primary-500 focus:border-primary-500 p-2.5 border outline-none transition-shadow ${errors.password ? 'border-danger-500 focus:ring-danger-500' : ''}`}
                   placeholder="••••••••"
                   {...register('password', { 
                     required: 'Password is required',
@@ -89,7 +89,7 @@ const LoginPage = () => {
                   })}
                 />
               </div>
-              {errors.password && <p className="mt-1 text-sm text-red-600 font-medium">{errors.password.message}</p>}
+              {errors.password && <p className="mt-1 text-sm text-danger-500 dark:text-danger-400 font-medium">{errors.password.message}</p>}
             </div>
           </div>
 
@@ -98,16 +98,16 @@ const LoginPage = () => {
               <input
                 id="remember-me"
                 type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-slate-300 dark:border-slate-700 rounded cursor-pointer"
                 {...register('rememberMe')}
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 cursor-pointer">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-secondary-700 dark:text-slate-300 cursor-pointer">
                 Remember me
               </label>
             </div>
 
             <div className="text-sm">
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+              <a href="#" className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors">
                 Forgot your password?
               </a>
             </div>
@@ -117,7 +117,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed transition-all shadow-sm"
+              className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               {isLoading ? (
                 <div className="flex items-center">
@@ -130,7 +130,7 @@ const LoginPage = () => {
               ) : (
                 <>
                   <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <FiLogIn className="h-5 w-5 text-blue-500 group-hover:text-blue-400 transition-colors" />
+                    <FiLogIn className="h-5 w-5 text-primary-400 group-hover:text-primary-300 transition-colors" />
                   </span>
                   Sign in
                 </>
