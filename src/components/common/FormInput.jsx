@@ -38,13 +38,13 @@ const FormInput = forwardRef(({
           name={name}
           type={type}
           className={`
-            block w-full rounded-xl sm:text-sm transition-colors duration-200
+            block w-full rounded-xl sm:text-sm transition-colors duration-200 border
             ${LeftIcon ? 'pl-10' : 'pl-4'} 
             ${RightIcon ? 'pr-10' : 'pr-4'} 
             py-2.5 bg-white dark:bg-slate-900 shadow-sm
             ${error 
               ? 'border-danger-300 text-danger-900 placeholder-danger-300 focus:border-danger-500 focus:ring-danger-500 dark:border-danger-500/50 dark:text-danger-400 focus:ring-2' 
-              : 'border-slate-300 text-slate-900 placeholder-slate-400 focus:border-primary-500 focus:ring-primary-500 dark:border-slate-700 dark:text-white dark:placeholder-slate-500 focus:ring-2'
+              : 'border-slate-300 text-slate-900 placeholder-slate-400 focus:border-primary-500 focus:ring-primary-500 dark:border-slate-600 dark:text-white dark:placeholder-slate-500 focus:ring-2'
             }
           `}
           aria-invalid={error ? 'true' : 'false'}
