@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import {
   Button,
   Card,
@@ -11,11 +12,11 @@ import {
   Spinner,
   StatusBadge,
 } from '../../components/common';
-import { FiBox, FiPlus, FiEdit2, FiTrash2, FiFilter, FiSearch, FiAlertTriangle, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { FiBox, FiPlus, FiEdit2, FiTrash2, FiFilter, FiSearch } from 'react-icons/fi';
 import batchApi from '../../api/batchApi';
 import vaccineApi from '../../api/vaccineApi';
 import hospitalApi from '../../api/hospitalApi';
-import toast from 'react-hot-toast';
+import useAuthStore from '../../store/useAuthStore';
 
 const EMPTY_FORM = {
   batchNumber: '',
@@ -28,7 +29,11 @@ const EMPTY_FORM = {
 };
 
 const BatchesPage = () => {
-  // Data
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'Admin';
+  const canWrite = isAdmin || user?.role === 'HospitalStaff';
+
+  // Data State
   const [batches, setBatches] = useState([]);
   const [vaccines, setVaccines] = useState([]);
   const [hospitals, setHospitals] = useState([]);
@@ -174,7 +179,6 @@ const BatchesPage = () => {
 
   return (
     <div className="space-y-6">
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -184,9 +188,11 @@ const BatchesPage = () => {
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage stock, track expiry dates, and monitor hospital capacities.</p>
         </div>
-        <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
-          Add New Batch
-        </Button>
+        {canWrite && (
+          <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
+            Add New Batch
+          </Button>
+        )}
       </div>
 
       {/* Filters */}
@@ -250,7 +256,7 @@ const BatchesPage = () => {
           icon={FiSearch}
           title="No batches found"
           description={filterStatus || filterVaccine || filterHospital ? 'No batches match your filters.' : 'Get started by adding your first batch.'}
-          actionLabel={!filterStatus && !filterVaccine && !filterHospital ? 'Add New Batch' : 'Clear Filters'}
+          actionLabel={(!filterStatus && !filterVaccine && !filterHospital && canWrite) ? 'Add New Batch' : (filterStatus || filterVaccine || filterHospital ? 'Clear Filters' : null)}
           onAction={() => {
             if (!filterStatus && !filterVaccine && !filterHospital) handleOpenForm(null);
             else { setFilterStatus(''); setFilterVaccine(''); setFilterHospital(''); }
@@ -263,11 +269,12 @@ const BatchesPage = () => {
               <table className="min-w-full divide-y divide-border">
                 <thead className="bg-secondary-50 dark:bg-slate-800/50">
                   <tr>
-                    {['Batch No.', 'Vaccine', 'Hospital', 'Status & Qty', 'Dates', 'Actions'].map(h => (
-                      <th key={h} className={`px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${h === 'Actions' ? 'text-right' : 'text-left'}`}>
+                    {['Batch No.', 'Vaccine', 'Hospital', 'Status & Qty', 'Dates'].map(h => (
+                      <th key={h} className="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                         {h}
                       </th>
                     ))}
+                    {canWrite && <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>}
                   </tr>
                 </thead>
                 <tbody className="bg-card divide-y divide-border">
@@ -292,22 +299,26 @@ const BatchesPage = () => {
                         <div className="mb-1"><span className="font-semibold">Arr:</span> {new Date(batch.arrivalDate).toLocaleDateString()}</div>
                         <div><span className="font-semibold text-danger-400">Exp:</span> {new Date(batch.expiryDate).toLocaleDateString()}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                        <button
-                          onClick={() => handleOpenForm(batch)}
-                          className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors"
-                          aria-label="Edit"
-                        >
-                          <FiEdit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => { setSelectedBatch(batch); setIsDeleteOpen(true); }}
-                          className="p-1.5 text-slate-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded transition-colors ml-1"
-                          aria-label="Delete"
-                        >
-                          <FiTrash2 className="w-4 h-4" />
-                        </button>
-                      </td>
+                      {canWrite && (
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                          <button
+                            onClick={() => handleOpenForm(batch)}
+                            className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors"
+                            aria-label="Edit"
+                          >
+                            <FiEdit2 className="w-4 h-4" />
+                          </button>
+                          {isAdmin && (
+                            <button
+                              onClick={() => { setSelectedBatch(batch); setIsDeleteOpen(true); }}
+                              className="p-1.5 text-slate-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded transition-colors ml-1"
+                              aria-label="Delete"
+                            >
+                              <FiTrash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>

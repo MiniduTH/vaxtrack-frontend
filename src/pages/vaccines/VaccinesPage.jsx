@@ -15,6 +15,7 @@ import {
 } from '../../components/common';
 import { FiPlus, FiEdit2, FiTrash2, FiLayers, FiInfo, FiClock, FiImage, FiGrid, FiList } from 'react-icons/fi';
 import vaccineApi from '../../api/vaccineApi';
+import useAuthStore from '../../store/useAuthStore';
 
 const EMPTY_FORM = {
   name: '',
@@ -26,6 +27,9 @@ const EMPTY_FORM = {
 };
 
 const VaccinesPage = () => {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'Admin';
+  
   const [vaccines, setVaccines] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState('grid');
@@ -152,7 +156,6 @@ const VaccinesPage = () => {
 
   return (
     <div className="space-y-6">
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -160,7 +163,7 @@ const VaccinesPage = () => {
             <FiLayers className="text-primary-600 dark:text-primary-400" />
             Vaccine Catalog
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage the master list of available vaccines and their schedules.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage available vaccines and schedules.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="bg-card border border-border rounded-lg p-1 flex">
@@ -179,9 +182,11 @@ const VaccinesPage = () => {
               <FiList />
             </button>
           </div>
-          <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
-            Add Vaccine
-          </Button>
+          {isAdmin && (
+            <Button onClick={() => handleOpenForm(null)} icon={FiPlus} variant="primary">
+              Add Vaccine
+            </Button>
+          )}
         </div>
       </div>
 
@@ -225,8 +230,8 @@ const VaccinesPage = () => {
           icon={FiLayers}
           title="No vaccines recorded"
           description="The catalog is currently empty. Add your first vaccine to get started."
-          actionLabel="Add Vaccine"
-          onAction={() => handleOpenForm(null)}
+          actionLabel={isAdmin ? "Add Vaccine" : null}
+          onAction={isAdmin ? () => handleOpenForm(null) : null}
         />
       ) : filteredVaccines.length === 0 ? (
         <EmptyState
@@ -251,22 +256,24 @@ const VaccinesPage = () => {
                         <span className="text-sm">No Image</span>
                       </div>
                     )}
-                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={() => handleOpenForm(vax)}
-                        className="p-2 bg-card rounded-full text-primary-600 dark:text-primary-400 shadow hover:bg-primary-50 dark:hover:bg-primary-500/10"
-                        aria-label="Edit"
-                      >
-                        <FiEdit2 size={14} />
-                      </button>
-                      <button
-                        onClick={() => { setSelectedVaccine(vax); setIsDeleteOpen(true); }}
-                        className="p-2 bg-card rounded-full text-danger-600 dark:text-danger-400 shadow hover:bg-danger-50 dark:hover:bg-danger-500/10"
-                        aria-label="Delete"
-                      >
-                        <FiTrash2 size={14} />
-                      </button>
-                    </div>
+                    {isAdmin && (
+                      <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => handleOpenForm(vax)}
+                          className="p-2 bg-card rounded-full text-primary-600 dark:text-primary-400 shadow hover:bg-primary-50 dark:hover:bg-primary-500/10"
+                          aria-label="Edit"
+                        >
+                          <FiEdit2 size={14} />
+                        </button>
+                        <button
+                          onClick={() => { setSelectedVaccine(vax); setIsDeleteOpen(true); }}
+                          className="p-2 bg-card rounded-full text-danger-600 dark:text-danger-400 shadow hover:bg-danger-50 dark:hover:bg-danger-500/10"
+                          aria-label="Delete"
+                        >
+                          <FiTrash2 size={14} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <CardBody className="flex-1 flex flex-col">
                     <h3 className="text-lg font-bold text-foreground leading-tight">{vax.name}</h3>
@@ -321,20 +328,24 @@ const VaccinesPage = () => {
                             {vax.dosesRequired > 1 && <div className="text-xs text-slate-500 dark:text-slate-400">{vax.daysBetweenDoses} days apart</div>}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <button
-                              onClick={() => handleOpenForm(vax)}
-                              className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors"
-                              aria-label="Edit"
-                            >
-                              <FiEdit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => { setSelectedVaccine(vax); setIsDeleteOpen(true); }}
-                              className="p-1.5 text-slate-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded transition-colors ml-1"
-                              aria-label="Delete"
-                            >
-                              <FiTrash2 className="w-4 h-4" />
-                            </button>
+                            {isAdmin && (
+                              <>
+                                <button
+                                  onClick={() => handleOpenForm(vax)}
+                                  className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors"
+                                  aria-label="Edit"
+                                >
+                                  <FiEdit2 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => { setSelectedVaccine(vax); setIsDeleteOpen(true); }}
+                                  className="p-1.5 text-slate-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded transition-colors ml-1"
+                                  aria-label="Delete"
+                                >
+                                  <FiTrash2 className="w-4 h-4" />
+                                </button>
+                              </>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -361,7 +372,6 @@ const VaccinesPage = () => {
         size="lg"
       >
         <form onSubmit={handleSave} className="space-y-5">
-          {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Vaccine Image</label>
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border border-dashed rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
@@ -438,7 +448,7 @@ const VaccinesPage = () => {
               value={formData.description}
               onChange={e => setFormData({ ...formData, description: e.target.value })}
               className="w-full p-2.5 bg-card text-foreground border border-border rounded-xl outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
-              placeholder="Brief description about what this vaccine covers and side effects..."
+              placeholder="Brief description about what this vaccine covers..."
             />
           </div>
 
@@ -451,7 +461,6 @@ const VaccinesPage = () => {
         </form>
       </Modal>
 
-      {/* Delete Confirm */}
       <ConfirmDialog
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
