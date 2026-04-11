@@ -17,7 +17,7 @@ const InventoryDashboard = () => {
     const fetchDashboardData = async () => {
       try {
         setIsLoading(true);
-        
+
         // Strategy: We try to fetch from dedicated analytics endpoints first.
         // If they return 404 (because backend isn't fully wired yet), we seamlessly fallback
         // to calculating it directly from the /batches endpoint.
@@ -39,17 +39,17 @@ const InventoryDashboard = () => {
           console.warn('Analytics API unavailable. Calculating dashboard from raw batches...', apiErr);
           const rawBatches = await batchApi.getBatches();
           const batchList = Array.isArray(rawBatches) ? rawBatches : rawBatches.data || rawBatches.batches || [];
-          
+
           total = batchList.length;
-          
+
           // Fallback logic for low stock (< 100) and available
           lowStock = batchList.filter(b => b.quantity < 100 && b.status === 'Available');
-          
+
           // Fallback logic for expiring in next 30 days
           const nextMonth = new Date();
           nextMonth.setDate(nextMonth.getDate() + 30);
           const today = new Date();
-          
+
           expSoon = batchList.filter(b => {
              const expDate = new Date(b.expiryDate);
              return expDate > today && expDate <= nextMonth && b.status === 'Available';
@@ -134,7 +134,7 @@ const InventoryDashboard = () => {
             </div>
           </div>
           <div className="text-4xl font-extrabold text-foreground">{summary.totalBatches || 0}</div>
-          <Link to="/inventory/batches" className="text-sm text-primary-600 dark:text-primary-400 font-medium mt-2 hover:underline">
+          <Link to="/dashboard/batches" className="text-sm text-primary-600 dark:text-primary-400 font-medium mt-2 hover:underline">
             View full inventory →
           </Link>
         </div>
@@ -151,7 +151,7 @@ const InventoryDashboard = () => {
               {lowStockItems.length} items
             </span>
           </div>
-          
+
           <div className="divide-y divide-border max-h-96 overflow-y-auto">
             {lowStockItems.length === 0 ? (
               <div className="p-8 text-center text-secondary-500 dark:text-slate-400 text-sm">Stock levels are healthy across all hospitals.</div>
@@ -184,7 +184,7 @@ const InventoryDashboard = () => {
               {expiringSoon.length} items
             </span>
           </div>
-          
+
           <div className="divide-y divide-border max-h-96 overflow-y-auto">
             {expiringSoon.length === 0 ? (
               <div className="p-8 text-center text-secondary-500 dark:text-slate-400 text-sm">No batches mapped to expire in the next month.</div>
@@ -195,7 +195,7 @@ const InventoryDashboard = () => {
                 const today = new Date();
                 const diffTime = Math.abs(expDate - today);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
+
                 return (
                   <div key={item._id || item.id || idx} className="p-5 hover:bg-secondary-50 dark:hover:bg-slate-800/50 transition-colors">
                     <div className="flex justify-between items-start mb-2">
