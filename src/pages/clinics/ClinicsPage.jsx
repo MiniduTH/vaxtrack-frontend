@@ -22,6 +22,7 @@ const ClinicsPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchDate, setSearchDate] = useState('');
   const [filterHospital, setFilterHospital] = useState('');
+  const [filterVaccine, setFilterVaccine] = useState('');
   
   // Modals
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -75,15 +76,21 @@ const ClinicsPage = () => {
     return [{ label: 'All Hospitals', value: '' }, ...names.map(name => ({ label: name, value: name }))];
   }, [clinics]);
 
+  const vaccineOptionsForFilter = useMemo(() => {
+    const vaccines = [...new Set(clinics.map(c => c.vaccineType).filter(Boolean))];
+    return [{ label: 'All Vaccines', value: '' }, ...vaccines.map(v => ({ label: v, value: v }))];
+  }, [clinics]);
+
   const filteredClinics = useMemo(() => {
     return clinics.filter(c => {
       // Handle the case where c.date might be an ISO string
       const clinicDate = c.date ? c.date.split('T')[0] : '';
       const matchDate = searchDate ? clinicDate === searchDate : true;
       const matchHospital = filterHospital ? c.hospital?.name === filterHospital : true;
-      return matchDate && matchHospital;
+      const matchVaccine = filterVaccine ? c.vaccineType === filterVaccine : true;
+      return matchDate && matchHospital && matchVaccine;
     });
-  }, [clinics, searchDate, filterHospital]);
+  }, [clinics, searchDate, filterHospital, filterVaccine]);
 
   const handleOpenForm = (clinic = null) => {
     if (clinic) {
@@ -178,13 +185,22 @@ const ClinicsPage = () => {
                 onChange={(e) => setSearchDate(e.target.value)}
               />
             </div>
-            <div className="w-full md:w-1/2">
+            <div className="w-full md:w-1/3">
               <FormSelect 
                 id="filter-hospital"
                 label="Filter by Hospital"
                 value={filterHospital}
                 onChange={(e) => setFilterHospital(e.target.value)}
                 options={hospitalOptionsForFilter}
+              />
+            </div>
+            <div className="w-full md:w-1/3">
+              <FormSelect 
+                id="filter-vaccine"
+                label="Filter by Vaccine"
+                value={filterVaccine}
+                onChange={(e) => setFilterVaccine(e.target.value)}
+                options={vaccineOptionsForFilter}
               />
             </div>
           </div>
@@ -228,7 +244,7 @@ const ClinicsPage = () => {
                   </div>
 
                   {/* Schedule Details block */}
-                  <div className="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-6 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
                     <div className="flex flex-col">
                       <div className="text-xs text-slate-500 flex items-center gap-1"><FiCalendar /> Date</div>
                       <div className="font-semibold text-foreground mt-0.5">{clinic.date ? clinic.date.split('T')[0] : 'N/A'}</div>
@@ -236,6 +252,10 @@ const ClinicsPage = () => {
                     <div className="flex flex-col border-l border-border pl-3">
                       <div className="text-xs text-slate-500 flex items-center gap-1"><FiClock /> Schedule</div>
                       <div className="font-semibold text-foreground mt-0.5">{clinic.startTime} - {clinic.endTime}</div>
+                    </div>
+                    <div className="flex flex-col col-span-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                      <div className="text-xs text-slate-500 flex items-center gap-1"><FiActivity /> Vaccine Manufacturer</div>
+                      <div className="font-semibold text-primary-600 dark:text-primary-400 mt-0.5">{clinic.vaccineType || 'Not Specified'}</div>
                     </div>
                   </div>
 
@@ -274,7 +294,7 @@ const ClinicsPage = () => {
           title="No clinics found"
           description="There are no scheduled clinics matching your criteria."
           actionLabel="Clear Filters"
-          onAction={() => { setSearchDate(''); setFilterHospital(''); }}
+          onAction={() => { setSearchDate(''); setFilterHospital(''); setFilterVaccine(''); }}
         />
       )}
 
