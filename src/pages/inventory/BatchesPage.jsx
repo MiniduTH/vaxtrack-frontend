@@ -164,7 +164,7 @@ const BatchesPage = () => {
         </div>
         <button
           onClick={openAddModal}
-          className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-sm font-medium"
+          className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-400 transition shadow-sm font-medium"
         >
           <FiPlus className="mr-2" /> Add New Batch
         </button>
@@ -248,7 +248,7 @@ const BatchesPage = () => {
               </thead>
               <tbody className="bg-card divide-y divide-border">
                 {filteredBatches.map((batch) => (
-                  <tr key={batch._id || batch.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={batch._id || batch.id} className="hover:bg-secondary-50 dark:hover:bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-foreground font-mono">
                       #{batch.batchNumber}
                     </td>
@@ -269,10 +269,10 @@ const BatchesPage = () => {
                       <div><span className="font-semibold text-danger-400">Exp:</span> {new Date(batch.expiryDate).toLocaleDateString()}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <button onClick={() => openEditModal(batch)} className="text-primary-600 dark:text-primary-400 hover:text-indigo-900 mx-3 p-1">
+                      <button onClick={() => openEditModal(batch)} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mx-3 p-1">
                         <FiEdit2 size={16} />
                       </button>
-                      <button onClick={() => handleDelete(batch._id || batch.id)} className="text-danger-500 dark:text-danger-400 hover:text-red-700 p-1">
+                      <button onClick={() => handleDelete(batch._id || batch.id)} className="text-danger-500 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 p-1">
                         <FiTrash2 size={16} />
                       </button>
                     </td>
@@ -293,7 +293,7 @@ const BatchesPage = () => {
                 <FiBox className="mr-2 text-primary-600 dark:text-primary-400" />
                 {editingId ? 'Edit Batch Record' : 'Register New Batch'}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-secondary-400 dark:text-slate-500 hover:text-red-500 transition-colors">
+              <button onClick={() => setIsModalOpen(false)} className="text-secondary-400 dark:text-slate-500 hover:text-danger-500 dark:hover:text-danger-400 transition-colors">
                 <FiX size={24} />
               </button>
             </div>
@@ -306,7 +306,7 @@ const BatchesPage = () => {
                   <input
                     type="text"
                     {...register('batchNumber', { required: 'Batch number is required' })}
-                    className="w-full p-2.5 bg-card border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-mono"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono placeholder:text-secondary-400"
                     placeholder="e.g. BATCH-2026-X1"
                   />
                   {errors.batchNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.batchNumber.message}</p>}
@@ -316,7 +316,7 @@ const BatchesPage = () => {
                   <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Vaccine Type *</label>
                   <select
                     {...register('vaccineId', { required: 'Required' })}
-                    className="w-full p-2.5 bg-card border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   >
                     <option value="">Select Vaccine...</option>
                     {vaccines.map(v => <option key={v._id || v.id} value={v._id || v.id}>{v.name}</option>)}
@@ -327,7 +327,7 @@ const BatchesPage = () => {
                   <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Assigned Hospital *</label>
                   <select
                     {...register('hospitalId', { required: 'Required' })}
-                    className="w-full p-2.5 bg-card border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   >
                     <option value="">Select Hospital...</option>
                     {hospitals.map(h => <option key={h._id || h.id} value={h._id || h.id}>{h.name}</option>)}
@@ -340,7 +340,7 @@ const BatchesPage = () => {
                     type="number"
                     min="1"
                     {...register('quantity', { required: 'Required', min: 1 })}
-                    className="w-full p-2.5 bg-card border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                     placeholder="e.g. 5000"
                   />
                 </div>
@@ -349,7 +349,7 @@ const BatchesPage = () => {
                   <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Status</label>
                   <select
                     {...register('status', { required: true })}
-                    className="w-full p-2.5 bg-card border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   >
                     <option value="Available">Available</option>
                     <option value="Depleted">Depleted</option>
@@ -362,7 +362,7 @@ const BatchesPage = () => {
                   <input
                     type="date"
                     {...register('arrivalDate', { required: 'Required' })}
-                    className="w-full p-2.5 bg-card border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
 
@@ -371,7 +371,7 @@ const BatchesPage = () => {
                   <input
                     type="date"
                     {...register('expiryDate', { required: 'Required' })}
-                    className="w-full p-2.5 bg-card border border-border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
               </div>
@@ -380,13 +380,13 @@ const BatchesPage = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-lg text-secondary-700 dark:text-slate-300 font-medium hover:bg-gray-100 transition"
+                  className="px-5 py-2.5 rounded-lg text-secondary-700 dark:text-slate-300 font-medium hover:bg-secondary-100 dark:hover:bg-slate-800 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-lg bg-primary-600 dark:bg-primary-500 text-white font-medium hover:bg-blue-700 shadow-sm transition"
+                  className="px-5 py-2.5 rounded-lg bg-primary-600 dark:bg-primary-500 text-white font-medium hover:bg-primary-700 dark:hover:bg-primary-400 shadow-sm transition"
                 >
                   {editingId ? 'Update Record' : 'Save Batch Info'}
                 </button>

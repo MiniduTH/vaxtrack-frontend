@@ -121,14 +121,14 @@ const VaccinesPage = () => {
           <div className="bg-card border rounded-lg p-1 flex">
             <button 
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded ${viewMode === 'grid' ? 'bg-blue-50 text-primary-600 dark:text-primary-400' : 'text-secondary-400 dark:text-slate-500 hover:text-gray-600'}`}
+              className={`p-2 rounded ${viewMode === 'grid' ? 'bg-blue-50 text-primary-600 dark:text-primary-400' : 'text-secondary-400 dark:text-slate-500 hover:text-secondary-600 dark:hover:text-slate-300'}`}
               title="Grid View"
             >
               <FiGrid />
             </button>
             <button 
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded ${viewMode === 'list' ? 'bg-blue-50 text-primary-600 dark:text-primary-400' : 'text-secondary-400 dark:text-slate-500 hover:text-gray-600'}`}
+              className={`p-2 rounded ${viewMode === 'list' ? 'bg-blue-50 text-primary-600 dark:text-primary-400' : 'text-secondary-400 dark:text-slate-500 hover:text-secondary-600 dark:hover:text-slate-300'}`}
               title="List View"
             >
               <FiList />
@@ -136,7 +136,7 @@ const VaccinesPage = () => {
           </div>
           <button
             onClick={openAddModal}
-            className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-sm font-medium"
+            className="flex items-center bg-primary-600 dark:bg-primary-500 text-white px-5 py-2.5 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-400 transition shadow-sm font-medium"
           >
             <FiPlus className="mr-2" /> Add Vaccine
           </button>
@@ -155,7 +155,7 @@ const VaccinesPage = () => {
           <FiLayers className="mx-auto h-12 w-12 text-secondary-400 dark:text-slate-500 mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-1">No vaccines recorded</h3>
           <p className="mb-4 text-sm">The catalog is currently empty.</p>
-          <button onClick={openAddModal} className="text-primary-600 dark:text-primary-400 hover:text-blue-700 font-medium text-sm">
+          <button onClick={openAddModal} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm">
             + Add to catalog
           </button>
         </div>
@@ -163,7 +163,7 @@ const VaccinesPage = () => {
         /* GRID VIEW */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {vaccines.map((vax) => (
-            <div key={vax._id || vax.id} className="bg-card rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
+            <div key={vax._id || vax.id} className="bg-card rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-medium transition-shadow group flex flex-col">
               <div className="h-48 bg-secondary-100 dark:bg-slate-800 relative overflow-hidden">
                 {vax.imageUrl ? (
                   <img src={vax.imageUrl} alt={vax.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -174,10 +174,10 @@ const VaccinesPage = () => {
                   </div>
                 )}
                 <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => openEditModal(vax)} className="p-2 bg-card rounded-full text-primary-600 dark:text-primary-400 shadow hover:bg-indigo-50">
+                  <button onClick={() => openEditModal(vax)} className="p-2 bg-card rounded-full text-primary-600 dark:text-primary-400 shadow hover:bg-primary-50 dark:hover:bg-primary-500/10">
                     <FiEdit2 size={14} />
                   </button>
-                  <button onClick={() => handleDelete(vax._id || vax.id)} className="p-2 bg-card rounded-full text-danger-600 dark:text-danger-400 shadow hover:bg-red-50">
+                  <button onClick={() => handleDelete(vax._id || vax.id)} className="p-2 bg-card rounded-full text-danger-600 dark:text-danger-400 shadow hover:bg-danger-50 dark:hover:bg-danger-500/10">
                     <FiTrash2 size={14} />
                   </button>
                 </div>
@@ -186,7 +186,7 @@ const VaccinesPage = () => {
                 <h3 className="text-lg font-bold text-foreground leading-tight">{vax.name}</h3>
                 <p className="text-sm text-secondary-500 dark:text-slate-400 mb-3">{vax.manufacturer}</p>
                 <div className="flex items-center space-x-4 mb-4 text-sm font-medium text-secondary-700 dark:text-slate-300">
-                  <div className="flex items-center bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md">
+                  <div className="flex items-center bg-blue-50 text-primary-700 dark:text-primary-400 px-2.5 py-1 rounded-md">
                     <FiLayers className="mr-1.5" size={14} /> {vax.dosesRequired} Doses
                   </div>
                   {vax.dosesRequired > 1 && (
@@ -216,7 +216,7 @@ const VaccinesPage = () => {
             </thead>
             <tbody className="bg-card divide-y divide-border">
               {vaccines.map((vax) => (
-                <tr key={vax._id || vax.id} className="hover:bg-gray-50">
+                <tr key={vax._id || vax.id} className="hover:bg-secondary-50 dark:hover:bg-slate-800/50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0 bg-secondary-100 dark:bg-slate-800 rounded-md overflow-hidden flex items-center justify-center">
@@ -241,10 +241,10 @@ const VaccinesPage = () => {
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button onClick={() => openEditModal(vax)} className="text-primary-600 dark:text-primary-400 hover:text-indigo-900 mr-4">
+                    <button onClick={() => openEditModal(vax)} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mr-4">
                       <FiEdit2 size={16} />
                     </button>
-                    <button onClick={() => handleDelete(vax._id || vax.id)} className="text-danger-500 dark:text-danger-400 hover:text-red-700">
+                    <button onClick={() => handleDelete(vax._id || vax.id)} className="text-danger-500 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300">
                       <FiTrash2 size={16} />
                     </button>
                   </td>
@@ -263,7 +263,7 @@ const VaccinesPage = () => {
               <h3 className="text-xl font-bold text-foreground">
                 {editingId ? 'Edit Vaccine' : 'Add New Vaccine'}
               </h3>
-              <button onClick={closeModal} className="text-secondary-400 dark:text-slate-500 hover:text-gray-600">
+              <button onClick={closeModal} className="text-secondary-400 dark:text-slate-500 hover:text-secondary-600 dark:hover:text-slate-300">
                 <FiX size={24} />
               </button>
             </div>
@@ -274,7 +274,7 @@ const VaccinesPage = () => {
                 {/* Image Upload Area */}
                 <div className="col-span-full">
                   <label className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-2">Vaccine Image</label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border border-dashed rounded-xl bg-secondary-50 dark:bg-slate-800/50 hover:bg-gray-100 transition relative">
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border border-dashed rounded-xl bg-secondary-50 dark:bg-slate-800/50 hover:bg-secondary-100 dark:hover:bg-slate-800 transition relative">
                     <div className="space-y-1 text-center">
                       {imagePreview ? (
                         <div className="mb-4">
@@ -285,7 +285,7 @@ const VaccinesPage = () => {
                       )}
                       
                       <div className="flex text-sm text-secondary-600 dark:text-slate-400 justify-center">
-                        <label htmlFor="image-upload" className="relative cursor-pointer bg-card rounded-md font-medium text-primary-600 dark:text-primary-400 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 px-2 py-1">
+                        <label htmlFor="image-upload" className="relative cursor-pointer bg-card rounded-md font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 px-2 py-1">
                           <span>Upload a file</span>
                           <input 
                             id="image-upload" 
@@ -310,7 +310,7 @@ const VaccinesPage = () => {
                     <input
                       type="text"
                       {...register('name', { required: 'Name is required' })}
-                      className={`w-full p-2.5 bg-secondary-50 dark:bg-slate-800/50 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-border'}`}
+                      className={`w-full p-2.5 bg-card text-foreground border rounded-lg outline-none focus:ring-2 focus:ring-primary-500 ${errors.name ? 'border-danger-500' : 'border-border'}`}
                       placeholder="e.g. Pfizer-BioNTech COVID-19"
                     />
                     {errors.name && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.name.message}</p>}
@@ -321,7 +321,7 @@ const VaccinesPage = () => {
                     <input
                       type="text"
                       {...register('manufacturer', { required: 'Manufacturer is required' })}
-                      className={`w-full p-2.5 bg-secondary-50 dark:bg-slate-800/50 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 ${errors.manufacturer ? 'border-red-500' : 'border-border'}`}
+                      className={`w-full p-2.5 bg-card text-foreground border rounded-lg outline-none focus:ring-2 focus:ring-primary-500 ${errors.manufacturer ? 'border-danger-500' : 'border-border'}`}
                       placeholder="e.g. Pfizer"
                     />
                     {errors.manufacturer && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.manufacturer.message}</p>}
@@ -333,7 +333,7 @@ const VaccinesPage = () => {
                       type="number"
                       min="1"
                       {...register('dosesRequired', { required: true, min: 1 })}
-                      className="w-full p-2.5 bg-secondary-50 dark:bg-slate-800/50 border border-border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
 
@@ -343,7 +343,7 @@ const VaccinesPage = () => {
                       type="number"
                       min="0"
                       {...register('daysBetweenDoses')}
-                      className="w-full p-2.5 bg-secondary-50 dark:bg-slate-800/50 border border-border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="e.g. 21"
                     />
                     <p className="text-xs text-secondary-500 dark:text-slate-400 mt-1">Leave as 0 if only 1 dose is required.</p>
@@ -354,7 +354,7 @@ const VaccinesPage = () => {
                     <textarea
                       rows={4}
                       {...register('description')}
-                      className="w-full p-2.5 bg-secondary-50 dark:bg-slate-800/50 border border-border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-2.5 bg-card text-foreground border border-border rounded-lg outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Brief description about what this vaccine covers and side effects..."
                     />
                   </div>
@@ -368,14 +368,14 @@ const VaccinesPage = () => {
               <button
                 type="button"
                 onClick={closeModal}
-                className="px-5 py-2.5 rounded-lg text-secondary-700 dark:text-slate-300 font-medium hover:bg-gray-200 transition"
+                className="px-5 py-2.5 rounded-lg text-secondary-700 dark:text-slate-300 font-medium hover:bg-secondary-200 dark:hover:bg-slate-700 transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 form="vaccine-form"
-                className="px-5 py-2.5 rounded-lg bg-primary-600 dark:bg-primary-500 text-white font-medium hover:bg-blue-700 shadow-sm transition"
+                className="px-5 py-2.5 rounded-lg bg-primary-600 dark:bg-primary-500 text-white font-medium hover:bg-primary-700 dark:hover:bg-primary-400 shadow-sm transition"
               >
                 {editingId ? 'Save Changes' : 'Add Vaccine to Catalog'}
               </button>

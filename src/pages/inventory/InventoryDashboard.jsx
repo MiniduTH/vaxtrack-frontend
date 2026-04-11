@@ -157,7 +157,7 @@ const InventoryDashboard = () => {
               <div className="p-8 text-center text-secondary-500 dark:text-slate-400 text-sm">Stock levels are healthy across all hospitals.</div>
             ) : (
               lowStockItems.map((item, idx) => (
-                <div key={item._id || item.id || idx} className="p-5 hover:bg-gray-50 transition-colors">
+                <div key={item._id || item.id || idx} className="p-5 hover:bg-secondary-50 dark:hover:bg-slate-800/50 transition-colors">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-bold text-foreground">{getName(item.vaccineId, 'Unknown Vaccine')}</h4>
                     <span className="text-danger-700 dark:text-danger-400 font-extrabold bg-danger-50 dark:bg-danger-500/10 px-3 py-1 rounded-full text-sm flex items-center">
@@ -197,7 +197,7 @@ const InventoryDashboard = () => {
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 
                 return (
-                  <div key={item._id || item.id || idx} className="p-5 hover:bg-gray-50 transition-colors">
+                  <div key={item._id || item.id || idx} className="p-5 hover:bg-secondary-50 dark:hover:bg-slate-800/50 transition-colors">
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-bold text-foreground">{getName(item.vaccineId, 'Unknown Vaccine')}</h4>
                       <span className="text-warning-700 dark:text-warning-400 font-bold bg-warning-50 dark:bg-warning-500/10 px-3 py-1 rounded-full text-sm">
