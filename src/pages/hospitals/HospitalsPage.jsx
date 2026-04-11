@@ -17,6 +17,17 @@ import { FiPlus, FiEdit2, FiTrash2, FiMapPin, FiSearch, FiFilter, FiNavigation }
 import hospitalApi from '../../api/hospitalApi';
 import geocodeApi from '../../api/geocodeApi';
 import { toast } from 'react-hot-toast';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix Leaflet's default marker icon issue in React
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 const HospitalsPage = () => {
   // State
@@ -32,6 +43,7 @@ const HospitalsPage = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGlobalMapOpen, setIsGlobalMapOpen] = useState(false);
 
   // Selected Item Operations
   const [selectedHospital, setSelectedHospital] = useState(null);
@@ -203,6 +215,8 @@ const HospitalsPage = () => {
           </div>
         </CardBody>
       </Card>
+
+      {/* Global Hospitals Map handled via FAB and Modal */}
 
       {/* Data List */}
       {loading ? (
@@ -385,6 +399,69 @@ const HospitalsPage = () => {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Global Map Floating Action Button (FAB) */}
+      <button
+        onClick={() => setIsGlobalMapOpen(true)}
+        className="fixed bottom-8 right-8 z-40 bg-primary-600 hover:bg-primary-700 text-white p-4 rounded-full shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center gap-2 pr-5"
+        aria-label="Open Geographical Map View"
+      >
+        <FiMapPin className="w-5 h-5" />
+        <span className="font-bold tracking-tight text-sm">Overview</span>
+      </button>
+
+      {/* Global Map Modal */}
+      <Modal
+        isOpen={isGlobalMapOpen}
+        onClose={() => setIsGlobalMapOpen(false)}
+        title={
+          <div className="flex items-center gap-2">
+            <FiMapPin className="text-primary-500" />
+            <span>Geographical Overview</span>
+            <span className="text-[10px] uppercase tracking-wider font-bold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-400 px-2 py-1 rounded-md ml-2">
+              {filteredHospitals.filter(h => h.latitude && h.longitude).length} Mapped
+            </span>
+          </div>
+        }
+        size="4xl"
+      >
+        <div className="h-[60vh] w-full relative z-0 rounded-xl overflow-hidden border border-border shadow-inner mt-2">
+          {isGlobalMapOpen && (
+            <MapContainer 
+              center={[7.8731, 80.7718]} 
+              zoom={7} 
+              scrollWheelZoom={true} 
+              className="h-full w-full"
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {filteredHospitals
+                .filter(h => h.latitude && h.longitude)
+                .map(hospital => (
+                  <Marker 
+                    key={hospital._id} 
+                    position={[hospital.latitude, hospital.longitude]}
+                  >
+                    <Popup className="rounded-xl overflow-hidden shadow-xl">
+                      <div className="font-sans min-w-[200px]">
+                        <h4 className="font-bold text-sm text-slate-900 mb-1 leading-tight">{hospital.name}</h4>
+                        <p className="text-xs text-slate-600 mb-3">{hospital.address}, {hospital.city}</p>
+                        <div className="text-[10px] text-slate-500 font-mono mb-3 bg-slate-100 p-1 rounded text-center">
+                          {hospital.latitude}, {hospital.longitude}
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+              ))}
+            </MapContainer>
+          )}
+        </div>
+        <div className="flex justify-end pt-4 border-t border-border mt-4">
+          <Button variant="outline" onClick={() => setIsGlobalMapOpen(false)}>Close Map</Button>
+        </div>
       </Modal>
 
     </div>
