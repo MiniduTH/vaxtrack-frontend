@@ -180,18 +180,11 @@ const AppointmentsPage = () => {
           <Button variant="ghost" size="sm" onClick={fetchAppointments} icon={FiRefreshCw}>
             Refresh
           </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            icon={FiPlus}
-            as={Link}
-            onClick={() => {}}
-          >
-            <Link to="/dashboard/appointments/book" className="flex items-center gap-1">
-              <FiPlus className="w-4 h-4" />
+          <Link to="/dashboard/appointments/book">
+            <Button variant="primary" size="sm" icon={FiPlus}>
               Book Appointment
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
 
