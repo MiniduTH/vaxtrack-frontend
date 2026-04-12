@@ -4,11 +4,11 @@ A React-based frontend for **VaxTrack** — a national vaccination tracking and 
 
 ## 🔗 Live URLs
 
-| Service                | URL                                            |
-| ---------------------- | ---------------------------------------------- |
-| **Frontend**           | https://vaxtrackweb.netlify.app                |
-| **Backend API**        | https://vaxtrack-backend.onrender.com          |
-| **API Docs (Swagger)** | https://vaxtrack-backend.onrender.com/api-docs |
+| Service                | URL                                              |
+| ---------------------- | ------------------------------------------------ |
+| **Frontend**           | <https://vaxtrackweb.netlify.app>                |
+| **Backend API**        | <https://vaxtrack-backend.onrender.com>          |
+| **API Docs (Swagger)** | <https://vaxtrack-backend.onrender.com/api-docs> |
 
 ---
 
@@ -64,7 +64,7 @@ src/
 ### Prerequisites
 
 - **Node.js** >= 20
-- VaxTrack backend running (see [backend README](../vaxtrack-backend/README.md))
+- VaxTrack backend running (see [backend README](https://github.com/MiniduTH/vaxtrack-backend/edit/dev/README.md))
 
 ### Installation
 
@@ -142,9 +142,11 @@ The Axios instance (`src/api/axiosInstance.js`) automatically attaches the JWT `
 3. Import the `vaxtrack-frontend` GitHub repository
 4. Framework preset: **Vite** (auto-detected)
 5. Add environment variable:
+
    ```
-   VITE_API_URL = https://vaxtrack-api.onrender.com/api
+   VITE_API_URL = https://vaxtrack-backend.onrender.com/api
    ```
+
 6. Click **Deploy**
 
 ### Deployment Report
@@ -156,8 +158,8 @@ The Axios instance (`src/api/axiosInstance.js`) automatically attaches the JWT `
 | **Deploy trigger**  | Auto-deploy on push to `main`               |
 | **Build command**   | `npm run build`                             |
 | **Publish dir**     | `dist`                                      |
-| **Frontend URL**    | https://vaxtrackweb.netlify.app             |
-| **Backend API URL** | https://vaxtrack-backend.onrender.com       |
+| **Frontend URL**    | <https://vaxtrackweb.netlify.app>           |
+| **Backend API URL** | <https://vaxtrack-backend.onrender.com>     |
 | **VITE_API_URL**    | `https://vaxtrack-backend.onrender.com/api` |
 
 ---
