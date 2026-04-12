@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Button, 
-  Card, 
-  CardBody, 
-  FormInput, 
+import {
+  Button,
+  Card,
+  CardBody,
+  FormInput,
   FormSelect,
   Modal,
   ConfirmDialog,
@@ -35,21 +35,21 @@ const ClinicsPage = () => {
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  
+
   // Modals
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // State
   const [selectedClinic, setSelectedClinic] = useState(null);
-  const [formData, setFormData] = useState({ 
-    hospital: '', 
-    date: '', 
-    startTime: '', 
-    endTime: '', 
-    capacity: 0, 
-    vaccineType: '' 
+  const [formData, setFormData] = useState({
+    hospital: '',
+    date: '',
+    startTime: '',
+    endTime: '',
+    capacity: 0,
+    vaccineType: ''
   });
 
   const fetchClinics = async () => {
@@ -193,7 +193,7 @@ const ClinicsPage = () => {
 
   return (
     <div className="space-y-6">
-      
+
       {/* Header Area */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -212,7 +212,7 @@ const ClinicsPage = () => {
         <CardBody className="p-4 sm:p-6 pb-2">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <FormInput 
+              <FormInput
                 id="filter-date"
                 type="date"
                 label="Filter by Date"
@@ -221,7 +221,7 @@ const ClinicsPage = () => {
               />
             </div>
             <div className="w-full md:w-1/3">
-              <FormSelect 
+              <FormSelect
                 id="filter-hospital"
                 label="Filter by Hospital"
                 value={filterHospital}
@@ -230,7 +230,7 @@ const ClinicsPage = () => {
               />
             </div>
             <div className="w-full md:w-1/3">
-              <FormSelect 
+              <FormSelect
                 id="filter-vaccine"
                 label="Filter by Vaccine"
                 value={filterVaccine}
@@ -250,92 +250,92 @@ const ClinicsPage = () => {
         </div>
       ) : filteredClinics.length > 0 ? (
         <>
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {paginatedClinics.map(clinic => {
-            const isFull = clinic.bookedCount >= clinic.capacity;
-            const utilization = Math.min(Math.round((clinic.bookedCount / clinic.capacity) * 100), 100);
-            
-            return (
-              <Card key={clinic._id} className="hover:shadow-medium transition-all group overflow-visible relative">
-                
-                {/* Absolute status badge overlapping map */}
-                <div className="absolute -top-3 -right-3 z-10 transition-transform group-hover:scale-105">
-                  <StatusBadge 
-                    status={isFull ? 'danger' : utilization > 80 ? 'warning' : 'success'} 
-                    size="md"
-                    className="shadow-md font-bold"
-                  >
-                    {isFull ? 'SESSION FULL' : 'AVAILABLE'}
-                  </StatusBadge>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {paginatedClinics.map(clinic => {
+              const isFull = clinic.bookedCount >= clinic.capacity;
+              const utilization = Math.min(Math.round((clinic.bookedCount / clinic.capacity) * 100), 100);
 
-                <CardBody className="flex flex-col h-full pt-5">
-                  <div className="mb-4">
-                    <p className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-1 flex items-center gap-1.5">
-                      <FiActivity className="text-primary-500" /> {clinic.vaccineType} VACCINE
-                    </p>
-                    <h3 className="text-lg font-bold text-foreground line-clamp-1" title={clinic.hospital?.name || 'Unknown Hospital'}>
-                      {clinic.hospital?.name || 'Unknown Hospital'}
-                    </h3>
+              return (
+                <Card key={clinic._id} className="hover:shadow-medium transition-all group overflow-visible relative">
+
+                  {/* Absolute status badge overlapping map */}
+                  <div className="absolute -top-3 -right-3 z-10 transition-transform group-hover:scale-105">
+                    <StatusBadge
+                      status={isFull ? 'danger' : utilization > 80 ? 'warning' : 'success'}
+                      size="md"
+                      className="shadow-md font-bold"
+                    >
+                      {isFull ? 'SESSION FULL' : 'AVAILABLE'}
+                    </StatusBadge>
                   </div>
 
-                  {/* Schedule Details block */}
-                  <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-6 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                    <div className="flex flex-col">
-                      <div className="text-xs text-slate-500 flex items-center gap-1"><FiCalendar /> Date</div>
-                      <div className="font-semibold text-foreground mt-0.5">{clinic.date ? clinic.date.split('T')[0] : 'N/A'}</div>
+                  <CardBody className="flex flex-col h-full pt-5">
+                    <div className="mb-4">
+                      <p className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-1 flex items-center gap-1.5">
+                        <FiActivity className="text-primary-500" /> {clinic.vaccineType} VACCINE
+                      </p>
+                      <h3 className="text-lg font-bold text-foreground line-clamp-1" title={clinic.hospital?.name || 'Unknown Hospital'}>
+                        {clinic.hospital?.name || 'Unknown Hospital'}
+                      </h3>
                     </div>
-                    <div className="flex flex-col border-l border-border pl-3">
-                      <div className="text-xs text-slate-500 flex items-center gap-1"><FiClock /> Schedule</div>
-                      <div className="font-semibold text-foreground mt-0.5">{clinic.startTime} - {clinic.endTime}</div>
-                    </div>
-                    <div className="flex flex-col col-span-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="text-xs text-slate-500 flex items-center gap-1"><FiActivity /> Vaccine Manufacturer</div>
-                      <div className="font-semibold text-primary-600 dark:text-primary-400 mt-0.5">{clinic.vaccineType || 'Not Specified'}</div>
-                    </div>
-                  </div>
 
-                  {/* Capacity Indicator Widget */}
-                  <div className="mb-6 flex-1 flex flex-col justify-end">
-                    <div className="flex justify-between text-sm mb-1.5 font-medium">
-                      <span className="text-slate-600 dark:text-slate-400 flex items-center gap-1"><FiUsers size={14}/> Appointments</span>
-                      <span className={isFull ? 'text-danger-600 dark:text-danger-400 font-bold' : 'text-foreground'}>
-                        {clinic.bookedCount} / {clinic.capacity}
-                      </span>
+                    {/* Schedule Details block */}
+                    <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-6 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                      <div className="flex flex-col">
+                        <div className="text-xs text-slate-500 flex items-center gap-1"><FiCalendar /> Date</div>
+                        <div className="font-semibold text-foreground mt-0.5">{clinic.date ? clinic.date.split('T')[0] : 'N/A'}</div>
+                      </div>
+                      <div className="flex flex-col border-l border-border pl-3">
+                        <div className="text-xs text-slate-500 flex items-center gap-1"><FiClock /> Schedule</div>
+                        <div className="font-semibold text-foreground mt-0.5">{clinic.startTime} - {clinic.endTime}</div>
+                      </div>
+                      <div className="flex flex-col col-span-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                        <div className="text-xs text-slate-500 flex items-center gap-1"><FiActivity /> Vaccine Manufacturer</div>
+                        <div className="font-semibold text-primary-600 dark:text-primary-400 mt-0.5">{clinic.vaccineType || 'Not Specified'}</div>
+                      </div>
                     </div>
-                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden shadow-inner">
-                      <div 
-                        className={`h-2.5 rounded-full ${getCapacityColor(clinic.bookedCount, clinic.capacity)} transition-all duration-500`} 
-                        style={{ width: `${utilization}%` }}
-                      ></div>
-                    </div>
-                  </div>
 
-                  <div className="pt-4 border-t border-border mt-auto flex justify-end gap-2">
-                    {canWrite && (
-                      <Button variant="outline" size="sm" onClick={() => handleOpenForm(clinic)} icon={FiEdit2}>
-                        Edit
-                      </Button>
-                    )}
-                    {isAdmin && (
-                      <Button variant="danger" className="!bg-danger-500/10 !text-danger-600 hover:!bg-danger-500 hover:!text-white border border-danger-200 dark:border-danger-900/50" size="sm" onClick={() => { setSelectedClinic(clinic); setIsDeleteOpen(true); }} icon={FiTrash2}>
-                        Delete
-                      </Button>
-                    )}
-                  </div>
-                </CardBody>
-              </Card>
-            )
-          })}
-        </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(filteredClinics.length / itemsPerPage)}
-          onPageChange={setCurrentPage}
-        />
-      </>
+                    {/* Capacity Indicator Widget */}
+                    <div className="mb-6 flex-1 flex flex-col justify-end">
+                      <div className="flex justify-between text-sm mb-1.5 font-medium">
+                        <span className="text-slate-600 dark:text-slate-400 flex items-center gap-1"><FiUsers size={14} /> Appointments</span>
+                        <span className={isFull ? 'text-danger-600 dark:text-danger-400 font-bold' : 'text-foreground'}>
+                          {clinic.bookedCount} / {clinic.capacity}
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden shadow-inner">
+                        <div
+                          className={`h-2.5 rounded-full ${getCapacityColor(clinic.bookedCount, clinic.capacity)} transition-all duration-500`}
+                          style={{ width: `${utilization}%` }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-border mt-auto flex justify-end gap-2">
+                      {canWrite && (
+                        <Button variant="outline" size="sm" onClick={() => handleOpenForm(clinic)} icon={FiEdit2}>
+                          Edit
+                        </Button>
+                      )}
+                      {isAdmin && (
+                        <Button variant="danger" size="sm" onClick={() => { setSelectedClinic(clinic); setIsDeleteOpen(true); }} icon={FiTrash2}>
+                          Delete
+                        </Button>
+                      )}
+                    </div>
+                  </CardBody>
+                </Card>
+              )
+            })}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(filteredClinics.length / itemsPerPage)}
+            onPageChange={setCurrentPage}
+          />
+        </>
       ) : (
-        <EmptyState 
+        <EmptyState
           icon={FiCalendar}
           title="No clinics found"
           description="There are no scheduled clinics matching your criteria."
@@ -345,47 +345,47 @@ const ClinicsPage = () => {
       )}
 
       {/* --- ADD/EDIT FORM --- */}
-      <Modal 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
+      <Modal
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
         title={selectedClinic ? "Edit Clinic Schedule" : "Schedule New Clinic"}
         size="lg"
       >
         <form onSubmit={handleSave} className="space-y-5">
-           
-           <FormSelect 
-             id="clinic-hospital"
-             label="Hospital" 
-             value={formData.hospital} 
-             onChange={e => setFormData({...formData, hospital: e.target.value})} 
-             placeholder="Select Hospital" 
-             required 
-             options={hospitalsList.map(h => ({ label: h.name, value: h._id }))}
-           />
-           
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-             <FormInput id="clinic-date" label="Date" type="date" min={new Date().toISOString().split('T')[0]} value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required />
-             <FormInput id="start-time" label="Start Time" type="time" value={formData.startTime} onChange={e => setFormData({...formData, startTime: e.target.value})} required />
-             <FormInput id="end-time" label="End Time" type="time" value={formData.endTime} onChange={e => setFormData({...formData, endTime: e.target.value})} required />
-           </div>
-           
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-             <FormInput id="capacity" label="Total Capacity" type="number" min="1" value={formData.capacity} onChange={e => setFormData({...formData, capacity: Number(e.target.value)})} required helperText="Max number of slots." />
-             <FormSelect id="vaccine" label="Vaccine Type" value={formData.vaccineType} onChange={e => setFormData({...formData, vaccineType: e.target.value})} required options={vaccinesList.map(vax => ({
-               label: `${vax.name} (${vax.manufacturer})`,
-               value: vax.name
-             }))} placeholder="Select Manufacturer" />
-           </div>
-           
-           <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
-             <Button variant="outline" onClick={() => setIsFormOpen(false)} disabled={isSubmitting}>Cancel</Button>
-             <Button type="submit" variant="primary" isLoading={isSubmitting}>Confirm Schedule</Button>
-           </div>
+
+          <FormSelect
+            id="clinic-hospital"
+            label="Hospital"
+            value={formData.hospital}
+            onChange={e => setFormData({ ...formData, hospital: e.target.value })}
+            placeholder="Select Hospital"
+            required
+            options={hospitalsList.map(h => ({ label: h.name, value: h._id }))}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <FormInput id="clinic-date" label="Date" type="date" min={new Date().toISOString().split('T')[0]} value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} required />
+            <FormInput id="start-time" label="Start Time" type="time" value={formData.startTime} onChange={e => setFormData({ ...formData, startTime: e.target.value })} required />
+            <FormInput id="end-time" label="End Time" type="time" value={formData.endTime} onChange={e => setFormData({ ...formData, endTime: e.target.value })} required />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+            <FormInput id="capacity" label="Total Capacity" type="number" min="1" value={formData.capacity} onChange={e => setFormData({ ...formData, capacity: Number(e.target.value) })} required helperText="Max number of slots." />
+            <FormSelect id="vaccine" label="Vaccine Type" value={formData.vaccineType} onChange={e => setFormData({ ...formData, vaccineType: e.target.value })} required options={vaccinesList.map(vax => ({
+              label: `${vax.name} (${vax.manufacturer})`,
+              value: vax.name
+            }))} placeholder="Select Manufacturer" />
+          </div>
+
+          <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
+            <Button variant="outline" onClick={() => setIsFormOpen(false)} disabled={isSubmitting}>Cancel</Button>
+            <Button type="submit" variant="primary" isLoading={isSubmitting}>Confirm Schedule</Button>
+          </div>
         </form>
       </Modal>
 
       {/* Delete Confirmation */}
-      <ConfirmDialog 
+      <ConfirmDialog
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         onConfirm={handleDelete}
