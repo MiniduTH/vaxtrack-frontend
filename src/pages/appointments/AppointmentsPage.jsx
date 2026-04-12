@@ -10,7 +10,9 @@ import {
 import {
   getMyAppointments,
   cancelAppointment,
+  getAllAppointments,
 } from '../../api/appointmentApi';
+import useAuthStore from '../../store/useAuthStore';
 import { formatDate } from '../../utils/formatters';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -134,11 +136,16 @@ const AppointmentsPage = () => {
   const [cancelling, setCancelling]     = useState(false);
   const [qrTarget, setQrTarget]         = useState(null); // appt to show in QR modal
 
+  const { user } = useAuthStore();
+  const isStaff = user?.role === 'Admin' || user?.role === 'HospitalStaff';
+
   // ── Fetch ──
   const fetchAppointments = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getMyAppointments();
+      const res = isStaff
+        ? await getAllAppointments()       // GET /api/appointments  (adminOnly)
+        : await getMyAppointments();       // GET /api/appointments/my
       setAppointments(res.data.data || []);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load appointments');
@@ -179,52 +186,60 @@ const AppointmentsPage = () => {
   return (
     <div className="space-y-6">
 
-      {/* Appointment sub-tab nav */}
-      <div className="flex gap-1 border-b border-border">
-        <NavLink
-          to="/dashboard/appointments"
-          end
-          className={({ isActive }) =>
-            `px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
-              isActive
-                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                : 'border-transparent text-slate-500 hover:text-foreground dark:text-slate-400'
-            }`
-          }
-        >
-          My Appointments
-        </NavLink>
-        <NavLink
-          to="/dashboard/appointments/book"
-          className={({ isActive }) =>
-            `px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
-              isActive
-                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                : 'border-transparent text-slate-500 hover:text-foreground dark:text-slate-400'
-            }`
-          }
-        >
-          Book Appointment
-        </NavLink>
-      </div>
+      {/* Appointment sub-tab nav — only shown for patients */}
+      {!isStaff && (
+        <div className="flex gap-1 border-b border-border">
+          <NavLink
+            to="/dashboard/appointments"
+            end
+            className={({ isActive }) =>
+              `px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+                isActive
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-slate-500 hover:text-foreground dark:text-slate-400'
+              }`
+            }
+          >
+            My Appointments
+          </NavLink>
+          <NavLink
+            to="/dashboard/appointments/book"
+            className={({ isActive }) =>
+              `px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+                isActive
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-slate-500 hover:text-foreground dark:text-slate-400'
+              }`
+            }
+          >
+            Book Appointment
+          </NavLink>
+        </div>
+      )}
 
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">My Appointments</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            {isStaff ? 'All Appointments' : 'My Appointments'}
+          </h1>
           <p className="text-sm text-secondary-500 dark:text-slate-400 mt-1">
-            Track and manage your vaccination appointments
+            {isStaff
+              ? 'Monitor and manage all patient appointments'
+              : 'Track and manage your vaccination appointments'}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={fetchAppointments} icon={FiRefreshCw}>
             Refresh
           </Button>
-          <Link to="/dashboard/appointments/book">
-            <Button variant="primary" size="sm" icon={FiPlus}>
-              Book Appointment
-            </Button>
-          </Link>
+          {!isStaff && (
+            <Link to="/dashboard/appointments/book">
+              <Button variant="primary" size="sm" icon={FiPlus}>
+                Book Appointment
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
