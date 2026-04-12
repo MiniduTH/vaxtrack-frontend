@@ -9,6 +9,9 @@ export const registerUser = (userData) => api.post('/users', userData);
 // GET /api/users/profile → user object (protected)
 export const getProfile = () => api.get('/users/profile');
 
+// PUT /api/users/profile → updated user object (protected)
+export const updateProfile = (data) => api.put('/users/profile', data);
+
 /**
  * Search patients by NIC, name, or ObjectId (Staff/Admin only)
  * GET /api/users/search?q=<query>

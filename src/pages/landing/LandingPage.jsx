@@ -111,9 +111,14 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <Link
             to="/"
-            className="font-heading text-xl font-bold tracking-tight"
+            className="flex items-center gap-2 font-heading text-xl font-bold tracking-tight"
             style={{ color: INK }}
           >
+            <img 
+              src="/logo/image.png" 
+              alt="VaxTrack Logo" 
+              className="w-8 h-8 rounded-lg object-contain"
+            />
             VaxTrack
           </Link>
           <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
@@ -433,9 +438,16 @@ export default function LandingPage() {
       <footer className="border-t border-slate-200 bg-white py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div>
+          <div className="flex items-center gap-2">
+            <img 
+              src="/logo/image.png" 
+              alt="VaxTrack Logo" 
+              className="w-7 h-7 rounded-md object-contain"
+            />
             <p className="font-heading text-lg font-bold" style={{ color: INK }}>
               VaxTrack
             </p>
+          </div>
             <p className="mt-1 text-sm text-slate-500">
               © {new Date().getFullYear()} VaxTrack. Developed for medical precision.
             </p>
