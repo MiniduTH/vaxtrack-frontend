@@ -218,10 +218,10 @@ const StaffDashboard = ({ user }) => {
 
   return (
     <div className="space-y-8">
-      <div className="relative p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-success-500/10 via-transparent to-transparent border border-success-500/10 overflow-hidden shadow-sm">
-        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-success-400/20 rounded-full blur-[80px] pointer-events-none" />
+      <div className="relative p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-primary-500/10 via-transparent to-transparent border border-primary-500/10 overflow-hidden shadow-sm">
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-primary-400/20 rounded-full blur-[80px] pointer-events-none" />
         <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight relative z-10 mb-2">
-          Staff Dashboard — <span className="text-transparent bg-clip-text bg-gradient-to-r from-success-600 to-success-400">{user?.name?.split(' ')[0]}</span>
+          Staff Dashboard — <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">{user?.name?.split(' ')[0]}</span>
         </h1>
         <p className="text-secondary-600 dark:text-slate-400 text-base md:text-lg relative z-10 font-medium">
           Manage clinic sessions, oversee patient workflows, and control the active queue.
@@ -296,10 +296,10 @@ const AdminDashboard = ({ user }) => {
 
   return (
     <div className="space-y-8">
-      <div className="relative p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-danger-500/10 via-transparent to-transparent border border-danger-500/10 overflow-hidden shadow-sm">
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-danger-400/20 rounded-full blur-[80px] pointer-events-none" />
+      <div className="relative p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-primary-500/10 via-transparent to-transparent border border-primary-500/10 overflow-hidden shadow-sm">
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary-400/20 rounded-full blur-[80px] pointer-events-none" />
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground tracking-tight relative z-10 mb-2 flex items-center gap-3">
-          System Admin — <span className="text-transparent bg-clip-text bg-gradient-to-r from-danger-600 to-danger-400">{user?.name?.split(' ')[0]}</span>
+          System Admin — <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">{user?.name?.split(' ')[0]}</span>
         </h1>
         <p className="text-secondary-600 dark:text-slate-400 text-base md:text-lg relative z-10 font-medium">
           Complete system overview, resource management, and global metrics control.
