@@ -85,9 +85,11 @@ const Sidebar = ({ isOpen, toggleSidebar, userRole = 'Public' }) => {
         {/* Brand */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-border/50">
           <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center text-white font-bold text-xl leading-none">
-              V
-            </span>
+            <img 
+              src="/logo/image.png" 
+              alt="VaxTrack Logo" 
+              className="w-8 h-8 rounded-lg object-contain"
+            />
             <span className="text-xl font-bold tracking-tight text-foreground">
               VaxTrack
             </span>

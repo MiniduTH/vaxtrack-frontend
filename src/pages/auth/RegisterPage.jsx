@@ -16,7 +16,6 @@ const RegisterPage = () => {
     try {
       setIsLoading(true);
       const res = await registerUser({ ...data, role: 'Public' });
-      // Backend returns { _id, name, email, role, token } directly
       const { token, ...user } = res.data;
       setLogin(user, token);
       toast.success('Account created! Welcome to VaxTrack.');
@@ -32,8 +31,15 @@ const RegisterPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-xl w-full space-y-8 bg-card p-8 rounded-xl shadow-lg border border-border">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground tracking-tight">
+        <div className="flex flex-col items-center">
+          <Link to="/">
+            <img 
+              src="/logo/image.png" 
+              alt="VaxTrack Logo" 
+              className="w-16 h-16 rounded-xl object-contain shadow-sm mb-4"
+            />
+          </Link>
+          <h2 className="text-center text-3xl font-extrabold text-foreground tracking-tight">
             Create an Account
           </h2>
           <p className="mt-2 text-center text-sm text-secondary-500 dark:text-slate-400">
@@ -46,7 +52,6 @@ const RegisterPage = () => {
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Name */}
             <div className="md:col-span-2">
               <label htmlFor="name" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Full Name</label>
               <div className="relative rounded-md shadow-sm">
@@ -64,7 +69,6 @@ const RegisterPage = () => {
               {errors.name && <p className="mt-1 text-sm text-danger-600 dark:text-danger-400 font-medium">{errors.name.message}</p>}
             </div>
 
-            {/* Email */}
             <div className="md:col-span-2">
               <label htmlFor="email" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Email Address</label>
               <div className="relative rounded-md shadow-sm">
@@ -88,7 +92,6 @@ const RegisterPage = () => {
               {errors.email && <p className="mt-1 text-sm text-danger-600 dark:text-danger-400 font-medium">{errors.email.message}</p>}
             </div>
 
-            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Password</label>
               <div className="relative rounded-md shadow-sm">
@@ -109,7 +112,6 @@ const RegisterPage = () => {
               {errors.password && <p className="mt-1 text-sm text-danger-600 dark:text-danger-400 font-medium">{errors.password.message}</p>}
             </div>
 
-            {/* NIC */}
             <div>
               <label htmlFor="nic" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">NIC Number</label>
               <div className="relative rounded-md shadow-sm">
@@ -127,7 +129,6 @@ const RegisterPage = () => {
               {errors.nic && <p className="mt-1 text-sm text-danger-600 dark:text-danger-400 font-medium">{errors.nic.message}</p>}
             </div>
 
-            {/* Phone */}
             <div className="md:col-span-2">
               <label htmlFor="phone" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Phone Number</label>
               <div className="relative rounded-md shadow-sm">
@@ -145,7 +146,6 @@ const RegisterPage = () => {
               {errors.phone && <p className="mt-1 text-sm text-danger-600 dark:text-danger-400 font-medium">{errors.phone.message}</p>}
             </div>
 
-            {/* Address */}
             <div className="md:col-span-2">
               <label htmlFor="address" className="block text-sm font-medium text-secondary-700 dark:text-slate-300 mb-1">Physical Address</label>
               <div className="relative rounded-md shadow-sm">

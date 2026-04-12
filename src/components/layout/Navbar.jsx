@@ -114,8 +114,12 @@ const Navbar = ({ toggleSidebar, user = { name: 'John Doe', role: 'Patient' } })
                   {user.role}
                 </p>
              </div>
-             <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center text-primary-600 dark:text-primary-400 shrink-0 border border-primary-200 dark:border-primary-800">
-               <FiUser className="w-4 h-4" />
+             <div className="w-9 h-9 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center text-primary-600 dark:text-primary-400 shrink-0 border border-primary-200 dark:border-primary-800 overflow-hidden">
+               {user.profilePicture ? (
+                 <img src={user.profilePicture} alt={user.name} className="h-full w-full object-cover" />
+               ) : (
+                 <FiUser className="w-4 h-4" />
+               )}
              </div>
           </button>
 

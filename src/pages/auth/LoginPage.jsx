@@ -18,7 +18,6 @@ const LoginPage = () => {
     try {
       setIsLoading(true);
       const res = await loginUser(data);
-      // Backend returns { _id, name, email, role, token } directly
       const { token, ...user } = res.data;
       setLogin(user, token);
       toast.success(`Welcome back, ${user.name.split(' ')[0]}!`);
@@ -34,8 +33,15 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-card p-8 rounded-xl shadow-lg border border-border">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground tracking-tight">
+        <div className="flex flex-col items-center">
+          <Link to="/">
+            <img 
+              src="/logo/image.png" 
+              alt="VaxTrack Logo" 
+              className="w-16 h-16 rounded-xl object-contain shadow-sm mb-4"
+            />
+          </Link>
+          <h2 className="text-center text-3xl font-extrabold text-foreground tracking-tight">
             Sign in to VaxTrack
           </h2>
           <p className="mt-2 text-center text-sm text-secondary-500 dark:text-slate-400">
