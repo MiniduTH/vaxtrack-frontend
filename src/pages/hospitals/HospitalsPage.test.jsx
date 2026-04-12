@@ -8,6 +8,9 @@ import { BrowserRouter } from 'react-router-dom';
 // Mock dependencies
 vi.mock('../../api/hospitalApi');
 vi.mock('../../api/geocodeApi');
+vi.mock('../../store/useAuthStore', () => ({
+  default: vi.fn(() => ({ user: { role: 'Admin' } }))
+}));
 vi.mock('react-hot-toast', () => ({
   toast: {
     success: vi.fn(),

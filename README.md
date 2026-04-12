@@ -119,7 +119,7 @@ All API calls go through `src/api/` modules. Each module wraps Axios and maps to
 
 | Module | Endpoints Used |
 |---|---|
-| `authApi.js` | POST `/users/login`, POST `/users/register` |
+| `authApi.js` | POST `/users/login`, POST `/users` |
 | `appointmentApi.js` | CRUD `/appointments`, `/appointments/my`, `/appointments/clinic/:id` |
 | `clinicApi.js` | GET `/clinics`, POST/PUT `/clinics` |
 | `hospitalApi.js` | GET/POST `/hospitals` |

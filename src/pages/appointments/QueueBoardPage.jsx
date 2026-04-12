@@ -125,7 +125,7 @@ const ClinicSelector = ({ onSelect }) => {
   }, []);
 
   if (loading) return <div className="flex justify-center py-12"><Spinner size="lg" /></div>;
-  if (!clinics.length) return <EmptyState message="No upcoming clinics found." />;
+  if (!clinics.length) return <EmptyState title="No upcoming clinics found." />;
 
   return (
     <div className="space-y-3">
@@ -288,7 +288,7 @@ const QueueBoardPage = () => {
       {loading ? (
         <div className="flex justify-center py-16"><Spinner size="lg" /></div>
       ) : filtered.length === 0 ? (
-        <EmptyState message={filter === 'All' ? 'No patients in queue yet.' : `No ${filter} patients.`} />
+        <EmptyState title={filter === 'All' ? 'No patients in queue yet.' : `No ${filter} patients.`} />
       ) : (
         <div className="space-y-3">
           {filtered.map((appt) => (

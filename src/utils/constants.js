@@ -2,7 +2,7 @@
 export const USER_ROLES = {
   ADMIN: 'Admin',
   STAFF: 'HospitalStaff',
-  USER: 'User',
+  USER: 'Public',
 };
 
 // SIDE EFFECT SEVERITY LEVELS
@@ -17,7 +17,7 @@ export const APPOINTMENT_STATUSES = {
   SCHEDULED: 'Scheduled',
   COMPLETED: 'Completed',
   CANCELLED: 'Cancelled',
-  NO_SHOW: 'No_Show',
+  NO_SHOW: 'No-Show',
 };
 
 // HTTP METHODS

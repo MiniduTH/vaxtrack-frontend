@@ -40,6 +40,6 @@ describe('MySideEffectsPage Component', () => {
 
   it('renders the previous reports section', () => {
     render(<MySideEffectsPage />);
-    expect(screen.getByText('My Previous Reports')).toBeInTheDocument();
+    expect(screen.getByText('Previous Reports')).toBeInTheDocument();
   });
 });

@@ -56,9 +56,12 @@ const InventoryDashboard = () => {
           });
         }
 
-        setLowStockItems(Array.isArray(lowStock) ? lowStock : lowStock.items || lowStock.batches || []);
-        setExpiringSoon(Array.isArray(expSoon) ? expSoon : expSoon.items || expSoon.batches || []);
-        setSummary({ totalBatches: total, criticalItems: lowStock.length });
+        const normalizedLowStock = Array.isArray(lowStock) ? lowStock : lowStock.items || lowStock.batches || [];
+        const normalizedExpSoon = Array.isArray(expSoon) ? expSoon : expSoon.items || expSoon.batches || [];
+
+        setLowStockItems(normalizedLowStock);
+        setExpiringSoon(normalizedExpSoon);
+        setSummary({ totalBatches: total, criticalItems: normalizedLowStock.length });
 
       } catch (error) {
         toast.error('Failed to load inventory dashboard.');

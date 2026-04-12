@@ -26,7 +26,7 @@ const Table = ({
   }
 
   if (!data.length) {
-    return <EmptyState message={emptyMessage} />;
+    return <EmptyState title={emptyMessage} />;
   }
 
   return (
