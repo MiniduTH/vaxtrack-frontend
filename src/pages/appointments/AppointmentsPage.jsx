@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   FiCalendar, FiPlus, FiRefreshCw, FiClock, FiMapPin, FiHash, FiX, FiMaximize2
 } from 'react-icons/fi';
 import {
-  Button, StatusBadge, Spinner, EmptyState, Modal, SearchBar
+  Button, StatusBadge, Spinner, EmptyState, Modal, SearchBar, Pagination
 } from '../../components/common';
 import {
   getMyAppointments,
@@ -136,6 +136,10 @@ const AppointmentsPage = () => {
   const [cancelling, setCancelling]     = useState(false);
   const [qrTarget, setQrTarget]         = useState(null); // appt to show in QR modal
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
   const { user } = useAuthStore();
   const isStaff = user?.role === 'Admin' || user?.role === 'HospitalStaff';
 
@@ -166,6 +170,16 @@ const AppointmentsPage = () => {
       (a.dependentId?.name ?? '').toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
   });
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, search]);
+
+  const paginatedAppointments = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(start, start + itemsPerPage);
+  }, [filtered, currentPage, itemsPerPage]);
 
   // ── Cancel flow ──
   const handleCancelConfirm = async () => {
@@ -292,16 +306,23 @@ const AppointmentsPage = () => {
           onAction={() => window.location.assign('/dashboard/appointments/book')}
         />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {filtered.map((appt) => (
-            <AppointmentCard
-              key={appt._id}
-              appt={appt}
-              onCancel={setCancelTarget}
-              onViewQR={setQrTarget}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {paginatedAppointments.map((appt) => (
+              <AppointmentCard
+                key={appt._id}
+                appt={appt}
+                onCancel={setCancelTarget}
+                onViewQR={setQrTarget}
+              />
+            ))}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(filtered.length / itemsPerPage)}
+            onPageChange={setCurrentPage}
+          />
+        </>
       )}
 
       {/* QR lightbox modal */}
