@@ -15,6 +15,7 @@ import {
 import { FiPlus, FiEdit2, FiTrash2, FiCalendar, FiClock, FiActivity, FiUsers } from 'react-icons/fi';
 import clinicApi from '../../api/clinicApi';
 import hospitalApi from '../../api/hospitalApi';
+import vaccineApi from '../../api/vaccineApi';
 import { toast } from 'react-hot-toast';
 import useAuthStore from '../../store/useAuthStore';
 
@@ -25,6 +26,7 @@ const ClinicsPage = () => {
 
   const [clinics, setClinics] = useState([]);
   const [hospitalsList, setHospitalsList] = useState([]);
+  const [vaccinesList, setVaccinesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchDate, setSearchDate] = useState('');
   const [filterHospital, setFilterHospital] = useState('');
@@ -47,7 +49,7 @@ const ClinicsPage = () => {
     startTime: '', 
     endTime: '', 
     capacity: 0, 
-    vaccineType: 'Pfizer' 
+    vaccineType: '' 
   });
 
   const fetchClinics = async () => {
@@ -76,9 +78,20 @@ const ClinicsPage = () => {
     }
   };
 
+  const fetchVaccines = async () => {
+    try {
+      const data = await vaccineApi.getVaccines();
+      const list = Array.isArray(data) ? data : data.data || data.vaccines || [];
+      setVaccinesList(list);
+    } catch (error) {
+      console.error('Failed to fetch vaccines list', error);
+    }
+  };
+
   useEffect(() => {
     fetchClinics();
     fetchHospitals();
+    fetchVaccines();
   }, []);
 
   const hospitalOptionsForFilter = useMemo(() => {
@@ -123,7 +136,7 @@ const ClinicsPage = () => {
         vaccineType: clinic.vaccineType
       });
     } else {
-      setFormData({ hospital: '', date: '', startTime: '', endTime: '', capacity: 50, vaccineType: 'Pfizer' });
+      setFormData({ hospital: '', date: '', startTime: '', endTime: '', capacity: 50, vaccineType: vaccinesList[0]?.name || '' });
     }
     setSelectedClinic(clinic);
     setIsFormOpen(true);
@@ -358,11 +371,10 @@ const ClinicsPage = () => {
            
            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
              <FormInput id="capacity" label="Total Capacity" type="number" min="1" value={formData.capacity} onChange={e => setFormData({...formData, capacity: Number(e.target.value)})} required helperText="Max number of slots." />
-             <FormSelect id="vaccine" label="Vaccine Type" value={formData.vaccineType} onChange={e => setFormData({...formData, vaccineType: e.target.value})} required options={[
-               {label: 'Pfizer-BioNTech', value: 'Pfizer'},
-               {label: 'Moderna', value: 'Moderna'},
-               {label: 'AstraZeneca', value: 'AstraZeneca'},
-             ]} placeholder="Select Manufacturer" />
+             <FormSelect id="vaccine" label="Vaccine Type" value={formData.vaccineType} onChange={e => setFormData({...formData, vaccineType: e.target.value})} required options={vaccinesList.map(vax => ({
+               label: `${vax.name} (${vax.manufacturer})`,
+               value: vax.name
+             }))} placeholder="Select Manufacturer" />
            </div>
            
            <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">

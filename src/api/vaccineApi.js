@@ -19,7 +19,7 @@ export const vaccineApi = {
 
   // Update existing vaccine (requires FormData if image is updated)
   updateVaccine: async (id, formData) => {
-    const response = await api.put(`/vaccines/${id}`, formData, {
+    const response = await api.patch(`/vaccines/${id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
